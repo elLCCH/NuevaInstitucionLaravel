@@ -28,9 +28,9 @@
 
 <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
 
-<link href="assets/plugins/fontawesome-free/css/all.min.css" rel="stylesheet">
-<link href="assets/dist/css/adminlte.min.css" rel="stylesheet">
-<link href="assets/scripts_validation/estilos.min.css" rel="stylesheet">
+<link href="assets/angular/browser/assets/plugins/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link href="assets/angular/browser/assets/dist/css/adminlte.min.css" rel="stylesheet">
+<link href="assets/angular/browser/assets/scripts_validation/estilos.min.css" rel="stylesheet">
 <link rel="stylesheet" href="/assets/angular/browser/styles-2EHULSVP.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="/assets/angular/browser/styles-2EHULSVP.css"></noscript></head>
 <body>
   <app-root></app-root>
@@ -41,12 +41,13 @@
   </script>
 
 <!-- PARA ADMINLTE -->
-<script src="assets/plugins/jquery/jquery.min.js"></script>
-<script src="assets/dist/js/adminlte.min.js"></script>
+<script src="assets/angular/browser/assets/plugins/jquery/jquery.min.js"></script>
+<script src="assets/angular/browser/assets/dist/js/adminlte.min.js"></script>
 
 <!-- REEMPLAZO FOR PRODUCTION -->
- <!-- TODOS LOS "assets" reemplazar por "assets/angular/browser/assets" -->
-<link rel="modulepreload" href="/assets/angular/browser/chunk-IV7RV3AX.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-EXB7S4ZR.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-SGI6ODGM.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-OJQSL2GX.js" type="module"></script></body>
+ <!-- TODOS LOS "assets" reemplazar por "assets/angular/browser/assets"
+  YANO ES NECESARIA YA Q EN EL PROYECTO ANGULAR HICE Q TENGA LA MISMA RUTA Q EN EL PROD-->
+<link rel="modulepreload" href="/assets/angular/browser/chunk-CUWYCH2U.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-EXB7S4ZR.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-OZVEYLWH.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-TYRQJ6PT.js" type="module"></script></body>
 <script type="text/javascript">
   var rutacion = 'http://localhost:8000/';
   // var rutacion = '';

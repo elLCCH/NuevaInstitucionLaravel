@@ -1070,6 +1070,8 @@ class CursoController extends Controller
 
         $Malla = $request->input('Malla');
         $Anio_id = $request->input('Anio_id');
+
+        $Lista=[];
         // $tipo = $request->query('tipo');
         // $curso = Curso::whereRaw('NivelCurso=?',$tipo)->orderBy('NombreCurso','desc')->get();
         // return $curso;
