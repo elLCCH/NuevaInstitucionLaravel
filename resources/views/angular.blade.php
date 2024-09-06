@@ -47,7 +47,7 @@
 <!-- REEMPLAZO FOR PRODUCTION -->
  <!-- TODOS LOS "assets" reemplazar por "assets/angular/browser/assets"
   YANO ES NECESARIA YA Q EN EL PROYECTO ANGULAR HICE Q TENGA LA MISMA RUTA Q EN EL PROD-->
-<link rel="modulepreload" href="/assets/angular/browser/chunk-CUWYCH2U.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-EXB7S4ZR.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-OZVEYLWH.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-TYRQJ6PT.js" type="module"></script></body>
+<link rel="modulepreload" href="/assets/angular/browser/chunk-2Z3TITDV.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O5OMXCGR.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-TXVV3QZU.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-77WJNV47.js" type="module"></script></body>
 <script type="text/javascript">
   var rutacion = 'http://localhost:8000/';
   // var rutacion = '';
