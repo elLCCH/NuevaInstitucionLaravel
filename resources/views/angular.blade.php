@@ -2,7 +2,7 @@
 <html lang="en" data-critters-container>
 <head>
   <meta charset="utf-8">
-  <title>AProyAngular</title>
+  <title>Instituto de Formación Artística</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -47,10 +47,14 @@
 <!-- REEMPLAZO FOR PRODUCTION -->
  <!-- TODOS LOS "assets" reemplazar por "assets/angular/browser/assets"
   YANO ES NECESARIA YA Q EN EL PROYECTO ANGULAR HICE Q TENGA LA MISMA RUTA Q EN EL PROD-->
-<link rel="modulepreload" href="/assets/angular/browser/chunk-2Z3TITDV.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O5OMXCGR.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-TXVV3QZU.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-77WJNV47.js" type="module"></script></body>
+<link rel="modulepreload" href="/assets/angular/browser/chunk-2Z3TITDV.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O5OMXCGR.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-TXVV3QZU.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-BDO66QMZ.js" type="module"></script></body>
 <script type="text/javascript">
-  var rutacion = 'http://localhost:8000/';
-  // var rutacion = '';
+
+  //MODO DESARROLLO
+  // var rutacion = 'http://localhost:8000/';
+
+  //PRODUCTION
+  var rutacion = '';
 
 </script>
 </html>
