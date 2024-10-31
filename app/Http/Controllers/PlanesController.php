@@ -18,7 +18,7 @@ class PlanesController extends Controller
         $data=DB::select("SELECT planes.id,planes.NivelCurso,planes.Descripcion,planes.Documento,planes.Anio_id,planes.Admin_id, administrativos.Ap_Paterno,administrativos.Ap_Materno,administrativos.Nombre,cursos.NombreCurso
         FROM `planes`
             LEFT JOIN `administrativos` ON `planes`.`Admin_id` = `administrativos`.`id`
-            LEFT JOIN `cursos` ON `planes`.`NombreMateria` = `cursos`.`id` where planes.Anio_id=$Anio_id");
+            LEFT JOIN `cursos` ON `planes`.`NombreMateria` = `cursos`.`id` where planes.Anio_id=$Anio_id ORDER BY planes.id DESC");
         return response()->json($data, 200);
     }
 
