@@ -138,6 +138,7 @@ Route::get('ListarHorariosSuperiorApi', 'App\Http\Controllers\ApisController@Lis
 Route::get('ListarHorariosCapacitacionApi', 'App\Http\Controllers\ApisController@ListarHorariosCapacitacionApi');
 Route::post('ConsultarApiCursosEst', 'App\Http\Controllers\ApisController@ConsultarApiCursosEst');
 Route::get('ListarAbreviacionDptosApi', 'App\Http\Controllers\ApisController@ListarAbreviacionDptosApi');
+Route::get('FechasRetiroApi', 'App\Http\Controllers\ApisController@FechasRetiroApi');
 
 // NUEVA GESTION
 Route::get('ListarTipoMateriaApi', 'App\Http\Controllers\ApisController@ListarTipoMateriaApi');

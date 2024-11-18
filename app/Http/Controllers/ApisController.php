@@ -251,6 +251,7 @@ class ApisController extends Controller
         );
         return $data;
     }
+
     public function ListarMensionesModernasApi()
     {
         $data = Array (
@@ -419,5 +420,29 @@ class ApisController extends Controller
         // $dataEst = (DB::select($request->consultasql))->unique(estudiante_id);
 
         // return $dataEst;
+    }
+    public function FechasRetiroApi() //USADO EN ESTUDIANTES, LISTA LAS MENCIONES
+    {
+        $data = Array (
+            "0" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"PRIMER","Fecha"=>"26/04/2024",),
+            "1" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"SEGUNDO","Fecha"=>"02/07/2024",),
+            "2" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"TERCER","Fecha"=>"01/10/2024",),
+            "3" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"CUARTO","Fecha"=>"29/11/2024",),
+            "4" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"SEMESTRALIZADO","Fecha"=>"29/11/2024",),
+            "5" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"DEFAULT","Fecha"=>"29/11/2024",),
+
+            "6" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"PRIMER","Fecha"=>"01/01/2024",),
+            "7" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"SEGUNDO","Fecha"=>"01/01/2024",),
+            "8" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"TERCER","Fecha"=>"01/01/2024",),
+            "9" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"CUARTO","Fecha"=>"01/01/2024",),
+            "10" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"DEFAULT","Fecha"=>"01/01/2024",),
+
+            "11" => Array ("Ifa" => "DEL FOLKLORE ORURO","Bimestre"=>"PRIMER","Fecha"=>"28/04/2024",),
+            "12" => Array ("Ifa" => "DEL FOLKLORE ORURO","Bimestre"=>"SEGUNDO","Fecha"=>"28/06/2024",),
+            "13" => Array ("Ifa" => "DEL FOLKLORE ORURO","Bimestre"=>"TERCER","Fecha"=>"13/09/2024",),
+            "14" => Array ("Ifa" => "DEL FOLKLORE ORURO","Bimestre"=>"CUARTO","Fecha"=>"13/11/2024",),
+            "15" => Array ("Ifa" => "DEL FOLKLORE ORURO","Bimestre"=>"DEFAULT","Fecha"=>"14/11/2024",),
+        );
+        return $data;
     }
 }

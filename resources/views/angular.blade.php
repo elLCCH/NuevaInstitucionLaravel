@@ -47,11 +47,11 @@
 <!-- REEMPLAZO FOR PRODUCTION -->
  <!-- TODOS LOS "assets" reemplazar por "assets/angular/browser/assets"
   YANO ES NECESARIA YA Q EN EL PROYECTO ANGULAR HICE Q TENGA LA MISMA RUTA Q EN EL PROD-->
-<link rel="modulepreload" href="/assets/angular/browser/chunk-RH7Z73TJ.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-HOSD4KO6.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-5EWIWO3F.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-D4MKA3IE.js" type="module"></script></body>
+<link rel="modulepreload" href="/assets/angular/browser/chunk-RH7Z73TJ.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-HOSD4KO6.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-5EWIWO3F.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-F6HNNWQM.js" type="module"></script></body>
 
 
 <!-- NIEVE -->
-<!-- <style>
+<style>
   body {
     margin: 0;
   }
@@ -136,10 +136,10 @@
   })(jQuery);
 
   $.snowfall.start({
-    content: '<img src="http://localhost:8000/fijos/Logotipo_sin_fondo.png" alt="snowflake" />',
+    content: '<img src="/fijos/nieve.png" alt="snowflake" width="50px"/>',
     size: { min: 20, max: 50 }
   });
-</script> -->
+</script>
 
 <!-- NIEVE HASTA ACA -->
 </html>

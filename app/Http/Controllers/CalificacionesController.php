@@ -32,76 +32,426 @@ class CalificacionesController extends Controller
         return $Curso;
     }
     public function ObtenerFechaRetiro(Request $request)
-    {
-        $RequestData=$request->all();
-        $data = array();
+    {   //OBTIENE INFORMACION DE FECHAS DE RETIRADOS/PROMOVIDOS/OBSERVACIONES EN GENERAL
+        $data1 = $request->input('ListaCentralizadorFinal');
+        $data2 = $request->input('datosNecesarios');
+        //DATOS DE LA ListaCentralizadorFinal
+        $RequestData = $data1; // Accede directamente a $data1
+
+        // DATOS NECESARIOS
+        $reglaInstancia = $data2['regla']; // REGLA PARA SOPORTAR 3,2,1,0 MATERIAS PARA ABROBAR O REPROBAR
+        $regimen = $data2['regimen']; // SABER SI ES ANUALIZADO O SEMESTRALIZADO
+        $anioSelect = $data2['anio'];
+        $lvlCurso = $data2['lvlCurso'];
+        $ifa = $data2['ifa'];
+
+        $cursoMayoria =''; //SABER A Q CURSO PERTENECE VIENDO LA MAYORIA DE SUS CURSOS
+        //OBTENER FECHAS API SEGUN IFA Q PERTENECEN
+        $fecha1erBimRetiro=' ';
+        $fecha2doBimRetiro=' ';
+        $fecha3erBimRetiro=' ';
+        $fecha4toBimRetiro=' ';
+        $fechaSemestralizadoRetiro=' ';
+        $fechaDefaultRetiro=' ';
+
+        // Instanciar el controlador y llamar al método
+        $apiController = new ApisController();
+        $dataFechasRetiro = $apiController->FechasRetiroApi(); // Procesa los datos como necesites
+
+        switch ($ifa) {
+            case 'MARIA LUISA LUZIO':
+                $filtroInfoFechas = array_filter($dataFechasRetiro, function($elemento) {
+                    return $elemento['Ifa'] === 'MARIA LUISA LUZIO';
+                });
+                foreach ($filtroInfoFechas as $elemento) {
+                    switch ($elemento['Bimestre']) {
+                        case 'PRIMER':
+                            $fecha1erBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'SEGUNDO':
+                            $fecha2doBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'TERCER':
+                            $fecha3erBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'CUARTO':
+                            $fecha4toBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'SEMESTRALIZADO':
+                            $fechaSemestralizadoRetiro = $elemento['Fecha'];
+                            break;
+                        default:
+                            $fechaDefaultRetiro = $elemento['Fecha'];
+                            break;
+                        }
+                    }
+                break;
+            case 'DEL FOLKLORE ORURO':
+                $filtroInfoFechas = array_filter($dataFechasRetiro, function($elemento) {
+                    return $elemento['Ifa'] === 'DEL FOLKLORE ORURO';
+                });
+                foreach ($filtroInfoFechas as $elemento) {
+                    switch ($elemento['Bimestre']) {
+                        case 'PRIMER':
+                            $fecha1erBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'SEGUNDO':
+                            $fecha2doBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'TERCER':
+                            $fecha3erBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'CUARTO':
+                            $fecha4toBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'SEMESTRALIZADO':
+                            $fechaSemestralizadoRetiro = $elemento['Fecha'];
+                            break;
+                        default:
+                            $fechaDefaultRetiro = $elemento['Fecha'];
+                            break;
+                        }
+                    }
+                break;
+            case 'BELLAS ARTES ORURO':
+                $filtroInfoFechas = array_filter($dataFechasRetiro, function($elemento) {
+                    return $elemento['Ifa'] === 'BELLAS ARTES ORURO';
+                });
+                foreach ($filtroInfoFechas as $elemento) {
+                    switch ($elemento['Bimestre']) {
+                        case 'PRIMER':
+                            $fecha1erBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'SEGUNDO':
+                            $fecha2doBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'TERCER':
+                            $fecha3erBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'CUARTO':
+                            $fecha4toBimRetiro = $elemento['Fecha'];
+                            break;
+                        case 'SEMESTRALIZADO':
+                            $fechaSemestralizadoRetiro = $elemento['Fecha'];
+                            break;
+                        default:
+                            $fechaDefaultRetiro = $elemento['Fecha'];
+                            break;
+                        }
+                    }
+                break;
+            default:
+                # code...
+                break;
+        }
+
+        //PARA LAS ESTAIDSTICAS EMPEZAMOS A REALIZAR LAS ACCIONES
+        $resFechas = array(); //ACÁ LOS RESULTADOS DE LAS FECHAS DE RETIRO DE TODOS LOS ESTUDIANTES QUE CORRESPONDEN
+        $resPromovidos = array(); //ACÁ LOS RESULTADOS DE LOS PROMOVIDOS DE TODOS LOS ESTUDIANTES QUE CORRESPONDEN
+        $resObservaciones = array(); //ACÁ LOS RESULTADOS DE LAS OBSERVACIONES DE TODOS Y CADA UNO DE LOS ESTUDIANTES
+
+        $cMaterias=array(); //PARA SABER LA CANTIDAD DE MATERIAS
+        $cAprobados=array();
+        $cReprobados=array();
+        $cRetirados=array();
+        $cCalifNull=array(); //QUE NO TIENE PROMEDIO
+
         foreach ($RequestData as $c) {
             $idEst= $c['id'];  //PARA INTERACTUAR CON SU id HACER ASI
+
+            //OBTENER TODAS LAS CALIFICACIONES+NOMBRE DEL DOCENTE+NOMBRE DEL CURSO+MAS CALIF BIMESTRALES +NIVEL CURSO //OSEA TAMBIEN SI ARRASTRA MATERIAS DE ANTERIORES
             $datasql = DB::select("SELECT administrativos.id as Admin_id,administrativos.Foto,administrativos.Ap_Paterno,
             administrativos.Ap_Materno,administrativos.Nombre,calificaciones.PruebaRecuperacion,calificaciones.Primero,calificaciones.Segundo,
             calificaciones.Tercero,calificaciones.Cuarto,calificaciones.PromEvT,calificaciones.PromEvP,
             calificaciones.Primero,calificaciones.Segundo,calificaciones.Tercero,calificaciones.Cuarto,calificaciones.Promedio,
             calificaciones.Teorica1,calificaciones.Teorica2,calificaciones.Teorica3,calificaciones.Teorica4,
-            calificaciones.Practica1,calificaciones.Practica2,calificaciones.Practica3,calificaciones.Practica4,
+            calificaciones.Practica1,calificaciones.Practica2,calificaciones.Practica3,calificaciones.Practica4,calificaciones.anio_id,
             calificaciones.curso_id as Curso_id, calificaciones.estudiante_id,cursos.NombreCurso, cursos.NivelCurso,cursos.Tipo,
             cursos.Sigla,cursos.BiTriEstado FROM calificaciones LEFT JOIN estudiantes ON calificaciones.estudiante_id = estudiantes.id LEFT JOIN
             cursos ON calificaciones.curso_id = cursos.id  LEFT JOIN administrativos__cursos ON cursos.id = administrativos__cursos.Curso_id LEFT JOIN
-             administrativos ON administrativos__cursos.Admin_id= administrativos.id where estudiante_id = $idEst");
+             administrativos ON administrativos__cursos.Admin_id= administrativos.id where calificaciones.anio_id=$anioSelect and estudiante_id = $idEst");
 
-            $idCursoTemporal=$datasql[0]->Curso_id;
-            $dataCTemporal=DB::select("SELECT anio_id from cursos where id = $idCursoTemporal");
-            $anioidTemporal=$dataCTemporal[0]->anio_id;
-            $consultarCurso=DB::select("SELECT Anio from anios where id = $anioidTemporal");
-            $varAnioTxt = $consultarCurso[0]->Anio;
-            if (str_contains($varAnioTxt, '/')) {
-                //ES SEMESTRALIZADO
-                if (str_contains($varAnioTxt, '/1')){
-                    $fecha = '02/03/2023';
-                    $data[] = (string)$fecha;
+            //CALCULAR A QUE NIVEL DE CURSO PERTENECE SEGUN LA CANTIDAD DE NIVEL_CURSO MAS FRECUENTE
+            $nivelCursoCount = [];
+            foreach ($datasql as $row) {
+                $nivelCurso = $row->NivelCurso;
+                if (!isset($nivelCursoCount[$nivelCurso])) {
+                    $nivelCursoCount[$nivelCurso] = 0;
+                } $nivelCursoCount[$nivelCurso]++;
+            }
+            $maxNivelCurso = '';
+            $maxCount = 0;
+            foreach ($nivelCursoCount as $nivelCurso => $count) {
+                if ($count > $maxCount) {
+                    $maxCount = $count;
+                    $maxNivelCurso = $nivelCurso;
+                }
+            }
+            $cursoMayoria =$maxNivelCurso; //SABER A Q CURSO PERTENECE VIENDO LA MAYORIA DE SUS CURSOS
+
+
+            //-----------------EMPEZANDO CON LOS CALCULOS DE TODO------------------
+            //HACER EL CALCULO //$resFechas es el resultado de las fechas
+            //ES ANUALIZADO
+            $forSegundo=0;
+            $forTercero=0;
+            $forCuarto=0;
+
+            foreach ($datasql as $d) {
+                if ($d->Promedio==0) {
+                    if (($d->Teorica2+$d->Practica2)==0) {
+                        $forSegundo++;
+                    }
+                    if(($d->Teorica3+$d->Practica3)==0){
+                        $forTercero++;
+                    }
+                    if(($d->Teorica4+$d->Practica4)==0){
+                        $forCuarto++;
+                    }
+                }
+            }
+
+            // Determinar la mayor PARA SABER DESDE CUANDO SE RETIRO
+            $maxValue = max($forSegundo, $forTercero, $forCuarto);
+            $fecha = ' ';
+
+            if ($regimen=='ANUALIZADO'){ //SI ES ANUALIZADO LAS FECHAS SON POR BIMESTRES
+                if ($maxValue == $forSegundo) {
+                    $fecha = $fecha2doBimRetiro;
+                } elseif ($maxValue == $forTercero) {
+                    $fecha = $fecha3erBimRetiro;
+                } elseif ($maxValue == $forCuarto) {
+                    $fecha = $fecha4toBimRetiro;
+                }
+            }else{//NO ES ANUALIZADO, ENTONCES ES OTRO O SEMESTRALIZADO
+                $fecha = $fechaSemestralizadoRetiro;
+            }
+
+
+            //FECHA SELECCIONADA DE RETIRO FINALIZADO
+            $contadorMaterias=0; //PARA SABER LA CANTIDAD DE MATERIAS
+            $contadorAprobados=0;
+            $contadorReprobados=0;
+            $contadorRetirados=0;
+            $contadorCalifNull=0; //QUE NO TIENE PROMEDIO
+            // array_push($resFechas,(string)$fecha);
+
+
+            //INICIANDO  PRUEBA CON SOLO LOS PARA DETERMINAR EL PROMOVIDO Y ESTADO DEFINITIVO
+
+            foreach ($datasql as $a) { //RECORRER MATERIA POR MATERIA
+                $contadorMaterias++;
+                if ($a->PruebaRecuperacion==null) { //VERIFICAR SI HAY CALIFICACION DE 2da INSTANCIA
+                    //NO HAY 2da INSTANCIA / SI NO HAY ENTONCES INTERACTUAR CON EL Promedio
+                    if ($a->Promedio > 60) {
+                        //APROBÓ
+                        $contadorAprobados++;
+                    } else if ($a->Promedio == 0){
+                        //RETIRADO
+                        $contadorRetirados++;
+                    } else if ($a->Promedio < 61){
+                        //REPROBÓ
+                        $contadorReprobados++;
+                    } else{
+                        //NO HAY CALIFICACION
+                        $contadorCalifNull++;
+                    }
+
+
+
                 }else{
-                    $fecha = '08/08/2023';
-                    $data[] = (string)$fecha;
+                    //SI TIENE 2da INSTANCIA / SI HAY, ENTONCES INTERACTUAR CON EL PruebaRecuperacion
+
+                    if ($a->PruebaRecuperacion > 60) {
+                        //APROBÓ
+                        $contadorAprobados++;
+                    } else if ($a->PruebaRecuperacion == 0){
+                        //RETIRADO
+                        $contadorRetirados++;
+                    } else if ($a->PruebaRecuperacion < 61){
+                        //REPROBÓ
+                        $contadorReprobados++;
+                    } else{
+                        //NO HAY CALIFICACION
+                        $contadorCalifNull++;
+                    }
+
                 }
+            }
+
+            //YA TENEMOS LISTOS LOS CONTADORES DE MATERIAS Y LOS CONTADORES DE APROBS REPROBADOS Y RETIRADOS DE MATERIAS DEL ESTUDIANTE
+            if ($contadorRetirados==$contadorMaterias) {
+                //EL ESTUDIANTE SE RETIRÓ EN TODAS LAS MATERIAS, ENTONCES ES RETIRADO
+                $resPromovidos[] = 'NO';
+                $resObservaciones[] = 'RETIRADO';
+                $resFechas[] = (string)$fecha;
+            }else if($contadorAprobados == $contadorMaterias){
+                //EL ESTUDIANTE APROBÓ TODAS LAS MATERIAS, ENTONCES ES APROBADO
+                $resPromovidos[] = 'SI';
+                $resObservaciones[] = 'APROBÓ';
+                $resFechas[] = ' ';
             }else{
-                //ES ANUALIZADO
-                $forSegundo=0;
-                $forTercero=0;
-                $forCuarto=0;
+                //ANALISIS RESPECTO A LAS REGLAS SELECCIONADAS
+                switch ($reglaInstancia) {
+                    case 'TECNICO SUPERIOR': //SELECCIONO REGLA DE HASTA 3 ARRASTRES
+                        if (($contadorReprobados+$contadorRetirados)>3) {
+                            //EL ESTUDIANTE REPROBÓ MAS DE 3 MATERIAS, ENTONCES REPRUEBA TODO
+                            $resPromovidos[] = 'NO';
+                            $resObservaciones[] = 'REPROBADO';
+                            $resFechas[] = ' ';
+                        }else{
+                        //APROBÓ CON ARRASTRE, ESTA DENTRO DEL RANGO y ES PROMOVIDO
+                            //HACIENDO PRUEBAS DE SI ES EL ULTIMO CURSO
+                            if ($regimen=='ANUALIZADO') { //SI ES ANUALIZADO
+                                //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
 
-                foreach ($datasql as $matEstsCalif) {
-                    if ($matEstsCalif->Promedio==0) {
-                        if (($matEstsCalif->Teorica2+$matEstsCalif->Practica2)==0) {
-                            $forSegundo++;
-                        }
-                        if(($matEstsCalif->Teorica3+$matEstsCalif->Practica3)==0){
-                            $forTercero++;
-                        }
-                        if(($matEstsCalif->Teorica4+$matEstsCalif->Practica4)==0){
-                            $forCuarto++;
-                        }
-                    }
-                }
-                $fecha = '';
-                if ($forSegundo!=0) {
-                    $fecha = '02/06/2023';
-                } else {
-                    if ($forTercero!=0) {
-                        $fecha = '01/08/2023';
-                    } else {
-                        if ($forCuarto!=0) {
-                            $fecha = '03/10/2023';
-                        }
-                    }
-                }
+                                if(str_contains($lvlCurso,'MEDIO')){//SI lvlCurso SE SELECCIONO LVL TECNICO MEDIO HACER
+                                    //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
+                                    if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                        $resPromovidos[] = 'NO';
+                                        $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                        $resFechas[] = ' ';
+                                    }else{
+                                        $resPromovidos[] = 'SI';
+                                        $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                        $resFechas[] = ' ';
+                                    }
+                                }else{
+                                    //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
+                                    if (str_contains($cursoMayoria, 'TERCER')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                        $resPromovidos[] = 'NO';
+                                        $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                        $resFechas[] = ' ';
+                                    }else{
+                                        $resPromovidos[] = 'SI';
+                                        $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                        $resFechas[] = ' ';
+                                    }
+                                }
 
-                $data[] = (string)$fecha;
+
+                            }else{
+                                //ES SEMESTRALIZADO
+                                //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+                                if (str_contains($cursoMayoria, 'SEXTO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                    $resPromovidos[] = 'NO';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }else{
+                                    $resPromovidos[] = 'SI';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }
+                            }
+                        }
+                        break;
+                    case 'TECNICO MEDIO': //SELECCIONO REGLA DE HASTA 2 ARRASTRES
+                        if (($contadorReprobados+$contadorRetirados)>2) {
+                            //EL ESTUDIANTE REPROBÓ MAS DE 2 MATERIAS, ENTONCES REPRUEBA TODO
+                            $resPromovidos[] = 'NO';
+                            $resObservaciones[] = 'REPROBADO';
+                            $resFechas[] = ' ';
+                        }else{
+                        //APROBÓ CON ARRASTRE, ESTA DENTRO DEL RANGO y ES PROMOVIDO
+                            //HACIENDO PRUEBAS DE SI ES EL ULTIMO CURSO
+                            if ($regimen=='ANUALIZADO') { //SI ES ANUALIZADO
+                                //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+                                if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                    $resPromovidos[] = 'NO';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }else{
+                                    $resPromovidos[] = 'SI';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }
+                            }else{
+                                //ES SEMESTRALIZADO
+                                //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+                                if (str_contains($cursoMayoria, 'SEXTO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                    $resPromovidos[] = 'NO';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }else{
+                                    $resPromovidos[] = 'SI';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }
+                            }
+                        }
+                        break;
+                    case 'CAPACITACION': //PARA CAPACITACION //SELECCIONO REGLA DE HASTA 0 ARRASTRES
+                        if (($contadorReprobados+$contadorRetirados)>0) {
+                            //EL ESTUDIANTE REPROBÓ MAS DE 0 MATERIAS, ENTONCES REPRUEBA TODO
+                            $resPromovidos[] = 'NO';
+                            $resObservaciones[] = 'REPROBADO';
+                            $resFechas[] = ' ';
+                        }else{
+                            //ENTONCES OBVIAMENTE APROBÓ
+                            $resPromovidos[] = 'SI';
+                            $resObservaciones[] = 'APROBÓ';
+                            $resFechas[] = ' ';
+                        }
+                        break;
+                    default: //POR DEFECTO SERIA LA REGLA CON 3 MATERIAS
+                        if (($contadorReprobados+$contadorRetirados)>3) {
+                            //EL ESTUDIANTE REPROBÓ MAS DE 3 MATERIAS, ENTONCES REPRUEBA TODO
+                            $resPromovidos[] = 'NO';
+                            $resObservaciones[] = 'REPROBADO';
+                            $resFechas[] = ' ';
+                        }else{
+                        //APROBÓ CON ARRASTRE, ESTA DENTRO DEL RANGO y ES PROMOVIDO
+                            //HACIENDO PRUEBAS DE SI ES EL ULTIMO CURSO
+                            if ($regimen=='ANUALIZADO') { //SI ES ANUALIZADO
+                                //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+                                if (str_contains($cursoMayoria, 'TERCER')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                    $resPromovidos[] = 'NO';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }else{
+                                    $resPromovidos[] = 'SI';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }
+                            }else{
+                                //ES SEMESTRALIZADO
+                                //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+                                if (str_contains($cursoMayoria, 'SEXTO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                    $resPromovidos[] = 'NO';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }else{
+                                    $resPromovidos[] = 'SI';
+                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resFechas[] = ' ';
+                                }
+                            }
+                        }
+                        break;
+                }
             }
 
 
 
+
+
+
+
+
+            $cMaterias[] = $contadorMaterias;
+            $cAprobados[] = $contadorAprobados;
+            $cReprobados[] = $contadorReprobados;
+            $cRetirados[] = $contadorRetirados;
+            $cCalifNull[] = $contadorCalifNull;
         }
-        $data=json_encode($data); //CONVIRTIENDO EN JSON PARA QUE NO DE ERRORES
-        return $data;    //TAMBN SE PUEDE SUMANDO $RequestData[n]['id']
+        // $data=json_encode($data); //CONVIRTIENDO EN JSON PARA QUE NO DE ERRORES
+        // return $data;    //TAMBN SE PUEDE SUMANDO $RequestData[n]['id']
+
+
+        //NO ES NECESARIO HACER JSON_ENCODE
+        return response()->json(["resFechas" =>$resFechas,"resPromovidos" =>$resPromovidos,"resObservaciones" =>$resObservaciones], 200);
+        //ESTE ES PARA VER LOS NUMEROS DE ESTADISTICA DE LAS CANTIDADES DE LAS MATERIAS
+        // return response()->json(["CantAprob" =>$cAprobados,"CantReprob" =>$cReprobados,"CantRetirado" =>$cRetirados,"CantMaterias" =>$cMaterias,"CantSinCalif" =>$cCalifNull], 200);
     }
     public function ListarForHeaderFinal(Request $request)
     {
@@ -444,146 +794,223 @@ class CalificacionesController extends Controller
     }
     public function VerificarSegundaInstancia(Request $request)
     {
-        $dataRequest = $request->all();
-        $idCurso= $dataRequest['curso_id'];
-        $anioid= $dataRequest['anio_id'];
-        $mallatxt= $dataRequest['Malla'];
-        // OBTENER DATOS DE CURSO MEDIANTE ID
-        $cursoData= DB::select("SELECT * from cursos where id='$idCurso'");
-        // $curso = 'PRIMERO SUPERIOR A';
-        // $MateriaActual='TEORIA DEL SONIDO';
-        // $Nivel = 'TECNICO SUPERIOR';
+        // $dataRequest = $request->all();
+        $idCurso= $request->input('curso_id');
+        $mallatxt= $request->input('Malla');
 
-        $curso = $cursoData[0]->NivelCurso;
-        $MateriaActual=$cursoData[0]->NombreCurso;
-        if (strpos($curso, 'SUPERIOR') !== false) {
-            $Nivel = 'TECNICO SUPERIOR';
-        }else{
-            $Nivel = 'CAPACITACION';
-        }
+        $anioid= $request->input('anio_id'); //7
+        $idest = $request->input('estudiante_id'); //190
 
-        // $CentralizadorFinalData = $_calif->ListarForCentralizadorFinal($NivelCurso);
+        $MateriasdelEstudiante = DB::select("SELECT * FROM calificaciones WHERE anio_id=$anioid AND estudiante_id=$idest");
 
-        //CONSEGUIR ID DE CURSO POR NIVEL DE CURSO
-        // $Cursodata= DB::select("SELECT *,SUBSTRING(Sigla,5,7) as SiglaNum from cursos where NivelCurso='$curso' order by SiglaNum asc");// ANTES ERA POR NUMERO EL ORDEN
-        $Cursodata= DB::select("SELECT * from cursos where NivelCurso='$curso' and anio_id=$anioid order by Rango asc"); //AHORA ORDENAMOS POR RANGO
-        //GUARDANDO ID DEL PRIMER CURSO DE LA PRIMERA FILA
-        $idCurso = $Cursodata[0]->id;
-
-
-        $concatmat = array();
-        foreach ($Cursodata as $cdata) {
-
-            $varCurso = $cdata->id;
-            $dataCurso = DB::select("select NombreCurso,Sigla from cursos where id=$varCurso");
-            // dataVariable =  DB::select("delete from NombreTabla where PrimaryKey='Simbolo Dolarid'");
-            $concatmat[] = $dataCurso[0]->NombreCurso;
-        }
-
-        $materiasEncontradas=json_encode($concatmat); //CONVIRTIENDO EN JSON PARA QUE NO DE ERRORES
-        $materias=$materiasEncontradas;
-
-        //OBTENER INFO DE ESTUDIANTE DE SUS CALIFICACIONES DE TODAS SUS MATERIAS
-        $dataCentralizador = DB::select("CALL getCentralizadorFinalLCCHFinish('$materias',$request->estudiante_id,'$curso',$anioid,'$mallatxt')"); // PARA LLAMAR PROCEDURES
-
-        //VERIFICAR CALIFICACIONES
+        $contadorAprobados=0;
         $contadorReprobados=0;
         $contadorRetirados=0;
-        $contadorAprobados=0;
         $contadorSegundaInstancia=0;
         $contadorInvalidos=0; //CANTIDAD DE MATERIAS Q NO CUMPLEN CON LA NOTA DE 40
-        $CursosInvalidos = array();
-        // foreach ($Cursodata as $a) {
-        //     $nomMateria= $a->NombreCurso;
-        //     if ($dataCentralizador[0]->$nomMateria != null) {//aca debemos verificar si es null la calificacion, sino da error
-        //         $calif=(int)($dataCentralizador[0]->$nomMateria);
-        //         if ($calif == 0) {
-        //             $contadorRetirados++;
-        //         }
-        //         else
-        //         {
-        //             if ($calif<61) {
-        //                 $contadorReprobados++;
-        //                 if ($calif>39) {
-        //                     $contadorSegundaInstancia++;
-        //                 }else if($calif<40){
-        //                     $contadorInvalidos++;
-        //                     $CursosInvalidos[]=$nomMateria;
-        //                 }
-        //             }else{
-        //                 $contadorAprobados++;
-        //             }
-        //         }
-        //     }
-
-        // }
-        foreach ($Cursodata as $a) {
-            $nomMateria = $a->NombreCurso;
-
-            // Verificar si la propiedad existe y no es nula
-            if (isset($dataCentralizador[0]->$nomMateria) && $dataCentralizador[0]->$nomMateria !== null) {
-                $calif = (int)($dataCentralizador[0]->$nomMateria);
-
-                if ($calif == 0) {
+        $contadorCalifNull=0;
+        foreach ($MateriasdelEstudiante as $a) {
+            if ($a->Promedio==null) {
+                $contadorCalifNull++;
+            }else{
+                if($a->Promedio < 61 && $a->Promedio > 39){
+                    //SEGUNDA INSTANCIA
+                    $contadorSegundaInstancia++;
+                    $contadorReprobados++;
+                } else if ($a->Promedio > 60) {
+                    //APROBÓ
+                    $contadorAprobados++;
+                } else if ($a->Promedio == 0){
+                    //RETIRADO
+                    $contadorReprobados++;
                     $contadorRetirados++;
+                } else if ($a->Promedio < 40 && $a->Promedio > 0){
+                    //REPROBÓ/SIN DERECHO A 2da INSTANCIA
+                    $contadorReprobados++;
+                    $contadorInvalidos++;
                 } else {
-                    if ($calif < 61) {
-                        $contadorReprobados++;
-                        if ($calif > 39) {
-                            $contadorSegundaInstancia++;
-                        } else if ($calif < 40) {
-                            $contadorInvalidos++;
-                            $CursosInvalidos[] = $nomMateria;
-                        }
-                    } else {
-                        $contadorAprobados++;
-                    }
+                    //REPROBÓ
+                    $contadorReprobados++;
                 }
             }
         }
 
         $RealizaraSegundaInstancia=true;
-        if ($contadorReprobados>3) { //SI SON MAS DE 3 MATERIAS REPROBADAS NO PUEDE DAR 2DA INSTANCIA
+        if (($contadorSegundaInstancia+$contadorInvalidos+$contadorRetirados)>3) { //SI SON MAS DE 3 MATERIAS REPROBADAS NO PUEDE DAR 2DA INSTANCIA
             $RealizaraSegundaInstancia=false;
-        }
-        else{
-
-            //$contadorSegundaInstancia //CANTIDAD DE MATERIAS VALIDAS PARA SEGUNDA INSTANCIA
-
-
-            switch ($Nivel) {
-                case 'TECNICO SUPERIOR':
-                    if ($contadorSegundaInstancia<4) { //SOLO SE ADMITEN HASTA 3 MATERIAS COMO 2DA INSTANCIA
-                            $RealizaraSegundaInstancia=true;
-                    }
-                    break;
-                case 'CAPACITACION':
-                    if($contadorRetirados!=0){
-                        $RealizaraSegundaInstancia=false;
-                    }else if ($contadorInvalidos!=0) {
-                        $RealizaraSegundaInstancia=false;
-                    }else{
-                        $RealizaraSegundaInstancia=true;
-                    }
-                    break;
-                default:
-                    # code...
-                    break;
-            }
-
-
+        } else{
+            $RealizaraSegundaInstancia=true;
         }
 
-        //VERIFICACION EXTRA - SI LA MATERIA ACTUAL COINCIDE CON LA MATERIA INVALIDA POR LO TANTO FALSEAR
-        for ($i=0; $i < $contadorInvalidos; $i++) {
-            if ($CursosInvalidos[$i]==$MateriaActual) {
-                $RealizaraSegundaInstancia=false;
-            }
-        }
 
-        // return true;
         return $RealizaraSegundaInstancia;
-        // return $contadorSegundaInstancia;
+
+
+
+
+
+
+        //-------------------------------------------------------------------
+
+        // // OBTENER DATOS DE CURSO MEDIANTE ID
+        // $cursoData= DB::select("SELECT * from cursos where id='$idCurso'");
+        // // $curso = 'PRIMERO SUPERIOR A';
+        // // $MateriaActual='TEORIA DEL SONIDO';
+        // // $Nivel = 'TECNICO SUPERIOR';
+
+        // $curso = $cursoData[0]->NivelCurso;
+        // $MateriaActual=$cursoData[0]->NombreCurso;
+        // if (strpos($curso, 'SUPERIOR') !== false) {
+        //     $Nivel = 'TECNICO SUPERIOR';
+        // }else{
+        //     $Nivel = 'CAPACITACION';
+        // }
+
+        // // $CentralizadorFinalData = $_calif->ListarForCentralizadorFinal($NivelCurso);
+
+        // //CONSEGUIR ID DE CURSO POR NIVEL DE CURSO
+        // // $Cursodata= DB::select("SELECT *,SUBSTRING(Sigla,5,7) as SiglaNum from cursos where NivelCurso='$curso' order by SiglaNum asc");// ANTES ERA POR NUMERO EL ORDEN
+        // $Cursodata= DB::select("SELECT * from cursos where NivelCurso='$curso' and anio_id=$anioid order by Rango asc"); //AHORA ORDENAMOS POR RANGO
+        // //GUARDANDO ID DEL PRIMER CURSO DE LA PRIMERA FILA
+        // $idCurso = $Cursodata[0]->id;
+
+
+        // $concatmat = array();
+        // foreach ($Cursodata as $cdata) {
+
+        //     $varCurso = $cdata->id;
+        //     $dataCurso = DB::select("select NombreCurso,Sigla from cursos where id=$varCurso");
+        //     // dataVariable =  DB::select("delete from NombreTabla where PrimaryKey='Simbolo Dolarid'");
+        //     $concatmat[] = $dataCurso[0]->NombreCurso;
+        // }
+
+        // $materiasEncontradas=json_encode($concatmat); //CONVIRTIENDO EN JSON PARA QUE NO DE ERRORES
+        // $materias=$materiasEncontradas;
+
+        // //OBTENER INFO DE ESTUDIANTE DE SUS CALIFICACIONES DE TODAS SUS MATERIAS
+        // $dataCentralizador = DB::select("CALL getCentralizadorFinalLCCHFinish('$materias',$request->estudiante_id,'$curso',$anioid,'$mallatxt')"); // PARA LLAMAR PROCEDURES
+
+        // //VERIFICAR CALIFICACIONES
+        // $contadorAprobados=0;
+        // $contadorReprobados=0;
+        // $contadorRetirados=0;
+        // $contadorSegundaInstancia=0;
+        // $contadorInvalidos=0; //CANTIDAD DE MATERIAS Q NO CUMPLEN CON LA NOTA DE 40
+        // $CursosInvalidos = array();
+        // // foreach ($Cursodata as $a) {
+        // //     $nomMateria= $a->NombreCurso;
+        // //     if ($dataCentralizador[0]->$nomMateria != null) {//aca debemos verificar si es null la calificacion, sino da error
+        // //         $calif=(int)($dataCentralizador[0]->$nomMateria);
+        // //         if ($calif == 0) {
+        // //             $contadorRetirados++;
+        // //         }
+        // //         else
+        // //         {
+        // //             if ($calif<61) {
+        // //                 $contadorReprobados++;
+        // //                 if ($calif>39) {
+        // //                     $contadorSegundaInstancia++;
+        // //                 }else if($calif<40){
+        // //                     $contadorInvalidos++;
+        // //                     $CursosInvalidos[]=$nomMateria;
+        // //                 }
+        // //             }else{
+        // //                 $contadorAprobados++;
+        // //             }
+        // //         }
+        // //     }
+
+        // // }
+        // foreach ($Cursodata as $a) {
+        //     $nomMateria = $a->NombreCurso;
+
+        //     // Verificar si la propiedad existe y no es nula
+        //     if (isset($dataCentralizador[0]->$nomMateria) && $dataCentralizador[0]->$nomMateria !== null) {
+        //         $calif = (int)($dataCentralizador[0]->$nomMateria);
+
+        //         if($calif < 61 && $calif > 39){
+        //             //SEGUNDA INSTANCIA
+        //             $contadorSegundaInstancia++;
+        //             $contadorReprobados++;
+        //         } else if ($calif > 60) {
+        //             //APROBÓ
+        //             $contadorAprobados++;
+        //         } else if ($calif == 0){
+        //             //RETIRADO
+        //             $contadorReprobados++;
+        //             $contadorRetirados++;
+        //         } else if ($calif < 40 && $calif > 0){
+        //             //REPROBÓ/SIN DERECHO A 2da INSTANCIA
+        //             $contadorReprobados++;
+        //             $contadorInvalidos++;
+        //         } else {
+        //             //REPROBÓ
+        //             $contadorReprobados++;
+        //         }
+
+
+        //         // if ($calif == 0) {
+        //         //     $contadorRetirados++;
+        //         // } else {
+
+
+        //         //     if ($calif < 61) {
+        //         //         $contadorReprobados++;
+        //         //         if ($calif > 39) {
+        //         //             $contadorSegundaInstancia++;
+        //         //         } else if ($calif < 40) {
+        //         //             $contadorInvalidos++;
+        //         //             $CursosInvalidos[] = $nomMateria;
+        //         //         }
+        //         //     } else {
+        //         //         $contadorAprobados++;
+        //         //     }
+        //         // }
+        //     }else{
+        //         //NO PERTENECE A LA MATERIA
+        //     }
+        // }
+
+        // $RealizaraSegundaInstancia=true;
+        // if (($contadorSegundaInstancia+$contadorInvalidos+$contadorRetirados)>3) { //SI SON MAS DE 3 MATERIAS REPROBADAS NO PUEDE DAR 2DA INSTANCIA
+        //     $RealizaraSegundaInstancia=false;
+        // } else {
+        //     //ESTA DENTRO DEL RANGO DE MATERIAS REPROBADAS DE LO PERMITIDO
+        //     $RealizaraSegundaInstancia=true;
+
+        //     // //$contadorSegundaInstancia //CANTIDAD DE MATERIAS VALIDAS PARA SEGUNDA INSTANCIA
+        //     // // $reglaInstancia='';
+        //     // switch ($Nivel) { //antes $Nivel
+        //     //     case 'HASTA 3 MATERIAS DE 2DA INSTANCIAR':
+        //     //         if ($contadorSegundaInstancia<4) { //SOLO SE ADMITEN HASTA 3 MATERIAS COMO 2DA INSTANCIA
+        //     //                 $RealizaraSegundaInstancia=true;
+        //     //         }
+        //     //         break;
+        //     //     case 'CAPACITACION':
+        //     //         if($contadorRetirados!=0){
+        //     //             $RealizaraSegundaInstancia=false;
+        //     //         }else if ($contadorInvalidos!=0) {
+        //     //             $RealizaraSegundaInstancia=false;
+        //     //         }else{
+        //     //             $RealizaraSegundaInstancia=true;
+        //     //         }
+        //     //         break;
+        //     //     default:
+        //     //         # code...
+        //     //         break;
+        //     // }
+        // }
+
+        // // //VERIFICACION EXTRA - SI LA MATERIA ACTUAL COINCIDE CON LA MATERIA INVALIDA POR LO TANTO FALSEAR
+        // // for ($i=0; $i < $contadorInvalidos; $i++) {
+        // //     if ($CursosInvalidos[$i]==$MateriaActual) {
+        // //         $RealizaraSegundaInstancia=false;
+        // //     }
+        // // }
+
+        // // return true;
+        // return $RealizaraSegundaInstancia;
+        // // return $contadorSegundaInstancia;
 
     }
     public function ListarForCentralizadorFinal(Request $request) //CENTRALIZADOR FINAL FINISH
