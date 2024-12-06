@@ -137,7 +137,7 @@ class ApisController extends Controller
         $data = Array (
             "0" => Array ("Carrera" => "MUSICA","Denominacion" => "NINGUNA","Malla"=>"ANTIGUA","Pertenece"=>"NINGUNA","Ifa"=>"MARIA LUISA LUZIO o DEL FOLKLORE ORURO"),
             //NUEVA MALLA 2023.....,"Ifa"=>"MARIA LUISA LUZIO"..
-            "1" => Array ("Carrera" => "MUSICA CLASICA/ACADEMICA","Denominacion" => " EN MÚSICA CLÁSICA/ACADÉMICA","Malla"=>"NUEVA","Pertenece"=>"MUSICA","Ifa"=>"MARIA LUISA LUZIO","Estado"=>"ACTIVO"),
+            "1" => Array ("Carrera" => "MÚSICA CLÁSICA/ACADÉMICA","Denominacion" => " EN MÚSICA CLÁSICA/ACADÉMICA","Malla"=>"NUEVA","Pertenece"=>"MUSICA","Ifa"=>"MARIA LUISA LUZIO","Estado"=>"ACTIVO"),
             "2" => Array ("Carrera" => "CANTO LIRICO","Denominacion" => "CANTO LÍRICO","Malla"=>"NUEVA","Pertenece"=>"MUSICA","Ifa"=>"OTRO","Estado"=>"ACTIVO"),
             "3" => Array ("Carrera" => "MÚSICA MODERNA","Denominacion" => " EN MÚSICA MODERNA","Malla"=>"NUEVA","Pertenece"=>"MUSICA","Ifa"=>"OTRO","Estado"=>"ACTIVO"),
             "4" => Array ("Carrera" => "MUSICA BOLIVIANA","Denominacion" => " EN MÚSICA BOLIVIANA","Malla"=>"NUEVA","Pertenece"=>"MUSICA","Ifa"=>"DEL FOLKLORE ORURO","Estado"=>"ACTIVO"),
@@ -148,7 +148,9 @@ class ApisController extends Controller
             "9" => Array ("Carrera" => "DANZAS BOLIVIANAS","Denominacion" => " ","Malla"=>"NUEVA","Pertenece"=>"DANZA","Ifa"=>"OTRO","Estado"=>"ACTIVO"),
             "10" => Array ("Carrera" => "TEATRO","Denominacion" => " ","Malla"=>"NUEVA","Pertenece"=>"TEATRO","Ifa"=>"OTRO","Estado"=>"ACTIVO"),
 
-            "11" => Array ("Carrera" => "ARTES VISUALES","Denominacion" => " SEMESTRALIZADA","Malla"=>"NUEVA o ANTIGUA","Pertenece"=>"ARTES PLASTICAS Y VISUALES","Ifa"=>"BELLAS ARTES ORURO","Estado"=>"ACTIVO")
+            "11" => Array ("Carrera" => "ARTES VISUALES","Denominacion" => " SEMESTRALIZADA","Malla"=>"NUEVA o ANTIGUA","Pertenece"=>"ARTES PLASTICAS Y VISUALES","Ifa"=>"BELLAS ARTES ORURO","Estado"=>"ACTIVO"),
+            "12" => Array ("Carrera" => "MÚSICA ACADÉMICA","Denominacion" => " EN MÚSICA CLÁSICA/ACADÉMICA","Malla"=>"NUEVA","Pertenece"=>"MUSICA","Ifa"=>"MARIA LUISA LUZIO","Estado"=>"ACTIVO"),
+
             // //para capacitacion NUEVA MALLA
             // "5" => Array ("Carrera" => "INICIACIÓN EN MÚSICA CLÁSICA/ACADÉMICA","Denominacion" => "NINGUNA","Malla"=>"NUEVA - CAPACITACION"),
             // "6" => Array ("Carrera" => "BÁSICO EN MÚSICA CLÁSICA/ACADÉMICA","Denominacion" => "NINGUNA","Malla"=>"NUEVA - CAPACITACION"),
