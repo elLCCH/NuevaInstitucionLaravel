@@ -193,12 +193,16 @@ class CalificacionesController extends Controller
             //-----------------EMPEZANDO CON LOS CALCULOS DE TODO------------------
             //HACER EL CALCULO //$resFechas es el resultado de las fechas
             //ES ANUALIZADO
+            $forPrimero=0;
             $forSegundo=0;
             $forTercero=0;
             $forCuarto=0;
 
             foreach ($datasql as $d) {
                 if ($d->Promedio==0) {
+                    if (($d->Teorica2+$d->Practica2)==0) {
+                        $forPrimero++;
+                    }
                     if (($d->Teorica2+$d->Practica2)==0) {
                         $forSegundo++;
                     }
@@ -212,11 +216,13 @@ class CalificacionesController extends Controller
             }
 
             // Determinar la mayor PARA SABER DESDE CUANDO SE RETIRO
-            $maxValue = max($forSegundo, $forTercero, $forCuarto);
+            $maxValue = max($forPrimero,$forSegundo, $forTercero, $forCuarto);
             $fecha = ' ';
 
             if ($regimen=='ANUALIZADO'){ //SI ES ANUALIZADO LAS FECHAS SON POR BIMESTRES
-                if ($maxValue == $forSegundo) {
+                if ($maxValue == $forPrimero) {
+                    $fecha = $fecha1erBimRetiro;
+                } elseif ($maxValue == $forSegundo) {
                     $fecha = $fecha2doBimRetiro;
                 } elseif ($maxValue == $forTercero) {
                     $fecha = $fecha3erBimRetiro;
@@ -287,9 +293,29 @@ class CalificacionesController extends Controller
                 $resFechas[] = (string)$fecha;
             }else if($contadorAprobados == $contadorMaterias){
                 //EL ESTUDIANTE APROBÓ TODAS LAS MATERIAS, ENTONCES ES APROBADO
-                $resPromovidos[] = 'SI';
-                $resObservaciones[] = 'APROBÓ';
-                $resFechas[] = ' ';
+                if(str_contains($lvlCurso,'MEDIO')){//SI lvlCurso SE SELECCIONO LVL TECNICO MEDIO HACER
+                    //NORMAL SIGUE SIENDO TECNICO MEDIO EL lvlCurso
+                    if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A SEGUNDO O A SEGUNDO AÑO
+                        $resPromovidos[] = 'NO';
+                        $resObservaciones[] = 'APROBÓ';
+                        $resFechas[] = ' ';
+                    }else{
+                        $resPromovidos[] = 'SI';
+                        $resObservaciones[] = 'APROBÓ';
+                        $resFechas[] = ' ';
+                    }
+                }else{
+                    //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
+                    if (str_contains($cursoMayoria, 'TERCER')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                        $resPromovidos[] = 'NO';
+                        $resObservaciones[] = 'APROBÓ';
+                        $resFechas[] = ' ';
+                    }else{
+                        $resPromovidos[] = 'SI';
+                        $resObservaciones[] = 'APROBÓ';
+                        $resFechas[] = ' ';
+                    }
+                }
             }else{
                 //ANALISIS RESPECTO A LAS REGLAS SELECCIONADAS
                 switch ($reglaInstancia) {
@@ -306,8 +332,8 @@ class CalificacionesController extends Controller
                                 //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
 
                                 if(str_contains($lvlCurso,'MEDIO')){//SI lvlCurso SE SELECCIONO LVL TECNICO MEDIO HACER
-                                    //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
-                                    if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                    //NORMAL SIGUE SIENDO TECNICO MEDIO EL lvlCurso
+                                    if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A SEGUNDO O A SEGUNDO AÑO
                                         $resPromovidos[] = 'NO';
                                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
                                         $resFechas[] = ' ';
