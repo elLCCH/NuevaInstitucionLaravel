@@ -433,11 +433,11 @@ class ApisController extends Controller
             "4" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"SEMESTRALIZADO","Fecha"=>"29/11/2024",),
             "5" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"DEFAULT","Fecha"=>"29/11/2024",),
 
-            "6" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"PRIMER","Fecha"=>"01/01/2024",),
-            "7" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"SEGUNDO","Fecha"=>"01/01/2024",),
-            "8" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"TERCER","Fecha"=>"01/01/2024",),
-            "9" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"CUARTO","Fecha"=>"01/01/2024",),
-            "10" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"DEFAULT","Fecha"=>"01/01/2024",),
+            "6" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"PRIMER","Fecha"=>"17/04/2024",),
+            "7" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"SEGUNDO","Fecha"=>"26/06/2024",),
+            "8" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"TERCER","Fecha"=>"18/09/2024",),
+            "9" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"CUARTO","Fecha"=>"06/11/2024",),
+            "10" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"DEFAULT","Fecha"=>"06/11/2024",),
 
             "11" => Array ("Ifa" => "DEL FOLKLORE ORURO","Bimestre"=>"PRIMER","Fecha"=>"28/04/2024",),
             "12" => Array ("Ifa" => "DEL FOLKLORE ORURO","Bimestre"=>"SEGUNDO","Fecha"=>"28/06/2024",),
