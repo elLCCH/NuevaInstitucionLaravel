@@ -115,6 +115,7 @@ class ApisController extends Controller
             "5" => Array ("Area" => "BOLIVIANA","Estado"=>"ACTIVO","Ifa"=>"DEL FOLKLORE ORURO","Malla"=>"ANTIGUA"),
             "6" => Array ("Area" => "ARTES PLASTICAS Y VISUALES","Estado"=>"ACTIVO","Ifa"=>"BELLAS ARTES ORURO","Malla"=>"ANTIGUA"),
             "7" => Array ("Area" => "ACADÉMICA CLASICA","Estado"=>"ACTIVO","Ifa"=>"MARIA LUISA LUZIO","Malla"=>"ANTIGUA"),
+            "8" => Array ("Area" => "ACADÉMICA","Estado"=>"ACTIVO","Ifa"=>"MARIA LUISA LUZIO","Malla"=>"ANTIGUA"),
         );
         return $data;
     }
@@ -135,7 +136,7 @@ class ApisController extends Controller
     {
         //EN VEZ DE AREA LE PONDREMOS Carrera
         $data = Array (
-            "0" => Array ("Carrera" => "MUSICA","Denominacion" => "NINGUNA","Malla"=>"ANTIGUA","Pertenece"=>"NINGUNA","Ifa"=>"MARIA LUISA LUZIO o DEL FOLKLORE ORURO"),
+            "0" => Array ("Carrera" => "MÚSICA","Denominacion" => "NINGUNA","Malla"=>"ANTIGUA","Pertenece"=>"NINGUNA","Ifa"=>"MARIA LUISA LUZIO o DEL FOLKLORE ORURO"),
             //NUEVA MALLA 2023.....,"Ifa"=>"MARIA LUISA LUZIO"..
             "1" => Array ("Carrera" => "MÚSICA CLÁSICA/ACADÉMICA","Denominacion" => " EN MÚSICA CLÁSICA/ACADÉMICA","Malla"=>"NUEVA","Pertenece"=>"MUSICA","Ifa"=>"MARIA LUISA LUZIO","Estado"=>"ACTIVO"),
             "2" => Array ("Carrera" => "CANTO LIRICO","Denominacion" => "CANTO LÍRICO","Malla"=>"NUEVA","Pertenece"=>"MUSICA","Ifa"=>"OTRO","Estado"=>"ACTIVO"),
@@ -433,7 +434,7 @@ class ApisController extends Controller
             "4" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"SEMESTRALIZADO","Fecha"=>"29/11/2024",),
             "5" => Array ("Ifa" => "BELLAS ARTES ORURO","Bimestre"=>"DEFAULT","Fecha"=>"29/11/2024",),
 
-            "6" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"PRIMER","Fecha"=>"17/04/2024",),
+            "6" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"PRIMER","Fecha"=>"15/05/2024",),
             "7" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"SEGUNDO","Fecha"=>"26/06/2024",),
             "8" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"TERCER","Fecha"=>"18/09/2024",),
             "9" => Array ("Ifa" => "MARIA LUISA LUZIO","Bimestre"=>"CUARTO","Fecha"=>"06/11/2024",),
