@@ -47,11 +47,11 @@
 <!-- REEMPLAZO FOR PRODUCTION -->
  <!-- TODOS LOS "assets" reemplazar por "assets/angular/browser/assets"
   YANO ES NECESARIA YA Q EN EL PROYECTO ANGULAR HICE Q TENGA LA MISMA RUTA Q EN EL PROD-->
-<link rel="modulepreload" href="/assets/angular/browser/chunk-BOIRNZ36.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-N6H3ZBOR.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-YGQKKRMP.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-323BQ2FZ.js" type="module"></script></body>
+<link rel="modulepreload" href="/assets/angular/browser/chunk-BOIRNZ36.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-N6H3ZBOR.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-YGQKKRMP.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-N2NVEBM6.js" type="module"></script></body>
 
 
 <!-- NIEVE -->
-<style>
+<!-- <style>
   body {
     margin: 0;
   }
@@ -139,7 +139,7 @@
     content: '<img src="/fijos/nieve.png" alt="snowflake" width="50px"/>',
     size: { min: 20, max: 50 }
   });
-</script>
+</script> -->
 
 <!-- NIEVE HASTA ACA -->
 </html>

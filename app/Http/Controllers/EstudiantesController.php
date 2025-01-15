@@ -27,8 +27,8 @@ class EstudiantesController extends Controller
         // return $data;
 
         // $estudiante = Estudiantes::orderBy('id', 'DESC')->get();
-        $data = DB::select("SELECT e.id, e.Ap_Paterno,e.Ap_Materno,e.Nombre,e.Turno,e.CI,e.Matricula,e.Categoria,e.Observacion,e.Estado, e.Curso_Solicitado,e.Edad,e.FechNac,e.Nivel
-        FROM estudiantes e order by e.id desc");
+        $data = DB::select("SELECT e.id, e.Ap_Paterno,e.Ap_Materno,e.Nombre,e.Turno,e.CI,e.Matricula,e.Categoria,e.Observacion,e.Estado, e.Curso_Solicitado,e.Edad,e.FechNac,e.Nivel, e.Verificacion
+        FROM estudiantes e order by e.FechInsc desc");
         return $data;
 
     }
@@ -378,6 +378,16 @@ class EstudiantesController extends Controller
         $estudiante->Nivel= $request->input('Nivel'); //new
         $estudiante->Malla= $request->input('Malla'); //new
         $estudiante->Admin_id= $request->input('Admin_id');
+
+        //PARA NUEVOS ATRIBUTOS
+        $estudiante->FechInsc= $request->input('FechInsc'); //new
+        $estudiante->LastAcciones= $request->input('LastAcciones'); //new
+        $estudiante->Verificacion= $request->input('Verificacion'); //new
+        $estudiante->Notas= $request->input('Notas'); //new
+        $estudiante->Anotaciones= $request->input('Anotaciones'); //new
+        $estudiante->UltimoAdmin= $request->input('UltimoAdmin'); //new
+        //HASTA ACA NUEVOS ATRIBUTOS
+
         // $estudiante->created_at= '2022-02-18'; //ESTO ES LO QUE HACE PARA QUE SEA LA FECHA LIMITE
         $estudiante->created_at=  Carbon::now(); //ESTO ES LO QUE HACE PARA QUE SEA LA FECHA LIMITE
         $estudiante->updated_at=  Carbon::now(); //ESTO ES LO QUE HACE PARA QUE SEA LA FECHA LIMITE
