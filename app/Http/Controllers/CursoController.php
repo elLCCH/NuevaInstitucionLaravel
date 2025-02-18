@@ -8,6 +8,7 @@ use App\Models\Curso;
 use App\Models\Estudiantes;
 use App\Models\Administrativos_Cursos;
 use App\Models\Prerrequisitos;
+use App\Models\Anio;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -1135,16 +1136,43 @@ class CursoController extends Controller
 
     }
 
-    public function EstadisticasInscripciones($idGestion)
+    public function EstadisticasInscripciones(Request $request)
     {
 
-        // $Anio_id=$request->Anio_id; //ANIO DE GESTION DE
-        $Anio_id=$idGestion; //ANIO DE GESTION DE
+        $Anio_id = $request->input('idGestion');  // Otra forma: $request->idGestion;
+        $NivelListar = $request->input('NivelListar');
 
+        // $Anio_id=$request->Anio_id; //ANIO DE GESTION DE
+        // $Anio_id=$idGestion; //ANIO DE GESTION DE
+
+        //OBTENIENDO ANIO EN TXT
+        $Aniodata = Anio::where('id', $Anio_id)->first(); // Usar first() para obtener el primer registro
+        $Aniotxt = $Aniodata->Anio; // Acceder a la propiedad Anio del modelo
+        if(strpos($Aniotxt, '/') !== false){
+            $RegimenEstudio='SEMESTRALIZADO';
+        }else{
+            $RegimenEstudio='ANUALIZADO';
+        }
 
         // $cursosGestion = Curso::where('Anio_id',4)->get();
         $dataXcurso= array();
-        $cursosGestion = Curso::where('Anio_id',$Anio_id)->distinct()->orderBy('NivelCurso','desc')->get(['NivelCurso']);
+        switch ($NivelListar) {
+            case 'TECNICO SUPERIOR':
+                $cursosGestion = Curso::where('Anio_id',$Anio_id)->where('NivelCurso', 'like', '%SUPERIOR%')->distinct()->orderBy('NivelCurso','desc')->get(['NivelCurso']);
+                break;
+            case 'TECNICO MEDIO':
+                $cursosGestion = Curso::where('Anio_id',$Anio_id)->where('NivelCurso', 'like', '%MEDIO%')->distinct()->orderBy('NivelCurso','desc')->get(['NivelCurso']);
+                break;
+            case 'TECNICO MEDIO Y SUPERIOR':
+                $cursosGestion = Curso::where('Anio_id',$Anio_id)->where('NivelCurso', 'like', '%SUPERIOR%')->orWhere('NivelCurso', 'like', '%MEDIO%')->distinct()->orderBy('NivelCurso','desc')->get(['NivelCurso']);
+                break;
+            case 'CAPACITACION':
+                $cursosGestion = Curso::where('Anio_id',$Anio_id)->where('NivelCurso', 'not like', '%SUPERIOR%')->where('NivelCurso', 'not like', '%MEDIO%')->distinct()->orderBy('NivelCurso','desc')->get(['NivelCurso']);
+                break;
+            default:
+                $cursosGestion = Curso::where('Anio_id',$Anio_id)->distinct()->orderBy('NivelCurso','desc')->get(['NivelCurso']);
+                break;
+        }
         foreach ($cursosGestion as $s) {
             $NivelCurso= $s->NivelCurso;
             try {
@@ -1157,6 +1185,9 @@ class CursoController extends Controller
                     $CalificacionesData = Calificaciones::where('curso_id','=', $k->id)->where('Anio_id','=',$Anio_id)->get();
                     $CalificacionesData = $CalificacionesData->unique('estudiante_id');
 
+                    //PARA SACAR MAS COMUNES DE NIVEL Y CARRERA
+                    $niveles = [];
+                    $carreras = [];
                     foreach ($CalificacionesData as $C) {
                         // $EstudiantesData = Estudiantes::where('id','=', $C->estudiante_id)->first();
                         $EstudiantesData = DB::select("SELECT anios.Anio ,calificaciones.Arrastre, cursos.NivelCurso, `estudiantes`.CI, estudiantes.Carrera,estudiantes.Nivel,
@@ -1172,20 +1203,38 @@ class CursoController extends Controller
                         $Lista[] = $EstudiantesData[0];
                         //PARA PONER EN LISTA DEL COMPACT IDIVIDUALMENTE
 
+                        // Recopilar niveles y carreras
+                        $niveles[] = $EstudiantesData[0]->Nivel;
+                        $carreras[] = $EstudiantesData[0]->Carrera;
                     }
+
+
+                    // Contar la frecuencia de cada nivel
+                    // Filtrar el array para eliminar valores no válidos
+                    $niveles = array_filter($niveles, function ($valor) {
+                        return is_string($valor) || is_int($valor);
+                    });
+                    $frecuenciaNiveles = array_count_values($niveles);
+                    arsort($frecuenciaNiveles); // Ordenar de mayor a menor
+                    $NivelLista = key($frecuenciaNiveles); // Obtener el nivel más común
+
+                    // Contar la frecuencia de cada carrera
+                    // Filtrar el array para eliminar valores no válidos
+                    $niveles = array_filter($carreras, function ($valor) {
+                        return is_string($valor) || is_int($valor);
+                    });
+                    $frecuenciaCarreras = array_count_values($carreras);
+                    arsort($frecuenciaCarreras); // Ordenar de mayor a menor
+                    $CarreraLista = key($frecuenciaCarreras); // Obtener la carrera más común
                     //SELECCIONAR SU
                     $SeConfirmoRegular=false;
                     foreach ($Lista as $h ) {
                         if ($SeConfirmoRegular==false) {
                             //no se confirmo
                             //HACER Q SE LLENE LOS CAMPOS
-                            $CarreraLista = $h->Carrera;
-                            $NivelLista=$h->Nivel;
-                            if(strpos($h->Anio, '/') !== false){
-                                $RegimenEstudio='SEMESTRALIZADO';
-                            }else{
-                                $RegimenEstudio='ANUALIZADO';
-                            }
+                            // $CarreraLista = $h->Carrera;
+                            // $NivelLista=$h->Nivel;
+
                             switch ($h->Nivel) {
                                 case 'TECNICO SUPERIOR':
                                     $NivelLista = 'TECNICO SUPERIOR';
@@ -1245,9 +1294,13 @@ class CursoController extends Controller
 
                 $dataXcurso[]= $data;
             } catch (Exception $e) {
-                return 'EL CURSO NO TIENE ESTUDIANTES';
+                return $e;
             }
         }
+        // Filtrar $dataXcurso para eliminar elementos con Total_Gral = 0
+        $dataXcurso = array_filter($dataXcurso, function ($item) {
+            return $item['Total_Gral'] != 0; // Mantener solo los elementos donde Total_Gral no sea 0
+        });
         return $dataXcurso;
     }
     public function ListaEstudiantes(Request $request)

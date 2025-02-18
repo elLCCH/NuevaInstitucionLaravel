@@ -36,7 +36,7 @@ Route::get('CargarMalla', 'App\Http\Controllers\CursoController@CargarMalla');
 Route::post('ClonarGestion', 'App\Http\Controllers\CursoController@ClonarGestion');
 Route::post('RespaldarSiglas', 'App\Http\Controllers\CursoController@RespaldarSiglas');
 Route::delete('cursoYPrerreq/{idCurso}', 'App\Http\Controllers\CursoController@cursoYPrerreq');
-Route::get('EstadisticasInscripciones/{idGestion}', 'App\Http\Controllers\CursoController@EstadisticasInscripciones');
+Route::post('EstadisticasInscripciones', 'App\Http\Controllers\CursoController@EstadisticasInscripciones');
 Route::post('materiasPorCurso', 'App\Http\Controllers\CursoController@materiasPorCurso');
 Route::post('clonarMaterias', 'App\Http\Controllers\CursoController@clonarMaterias');
 Route::post('editarParaleloMaterias', 'App\Http\Controllers\CursoController@editarParaleloMaterias');
