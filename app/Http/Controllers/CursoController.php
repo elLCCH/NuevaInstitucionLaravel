@@ -1140,8 +1140,9 @@ class CursoController extends Controller
     {
 
         $Anio_id = $request->input('idGestion');  // Otra forma: $request->idGestion;
-        $NivelListar = $request->input('NivelListar');
-
+        $NivelxListar = $request->input('NivelListar');
+        $Carreratxt = $request->input('Carreratxt');
+        $Niveltxt = $NivelxListar;
         // $Anio_id=$request->Anio_id; //ANIO DE GESTION DE
         // $Anio_id=$idGestion; //ANIO DE GESTION DE
 
@@ -1156,7 +1157,7 @@ class CursoController extends Controller
 
         // $cursosGestion = Curso::where('Anio_id',4)->get();
         $dataXcurso= array();
-        switch ($NivelListar) {
+        switch ($NivelxListar) {
             case 'TECNICO SUPERIOR':
                 $cursosGestion = Curso::where('Anio_id',$Anio_id)->where('NivelCurso', 'like', '%SUPERIOR%')->distinct()->orderBy('NivelCurso','desc')->get(['NivelCurso']);
                 break;
@@ -1186,8 +1187,8 @@ class CursoController extends Controller
                     $CalificacionesData = $CalificacionesData->unique('estudiante_id');
 
                     //PARA SACAR MAS COMUNES DE NIVEL Y CARRERA
-                    $niveles = [];
-                    $carreras = [];
+                    // $niveles = [];
+                    // $carreras = [];
                     foreach ($CalificacionesData as $C) {
                         // $EstudiantesData = Estudiantes::where('id','=', $C->estudiante_id)->first();
                         $EstudiantesData = DB::select("SELECT anios.Anio ,calificaciones.Arrastre, cursos.NivelCurso, `estudiantes`.CI, estudiantes.Carrera,estudiantes.Nivel,
@@ -1209,23 +1210,23 @@ class CursoController extends Controller
                     }
 
 
-                    // Contar la frecuencia de cada nivel
-                    // Filtrar el array para eliminar valores no válidos
-                    $niveles = array_filter($niveles, function ($valor) {
-                        return is_string($valor) || is_int($valor);
-                    });
-                    $frecuenciaNiveles = array_count_values($niveles);
-                    arsort($frecuenciaNiveles); // Ordenar de mayor a menor
-                    $NivelLista = key($frecuenciaNiveles); // Obtener el nivel más común
+                    // // Contar la frecuencia de cada nivel
+                    // // Filtrar el array para eliminar valores no válidos
+                    // $niveles = array_filter($niveles, function ($valor) {
+                    //     return is_string($valor) || is_int($valor);
+                    // });
+                    // $frecuenciaNiveles = array_count_values($niveles);
+                    // arsort($frecuenciaNiveles); // Ordenar de mayor a menor
+                    // $NivelLista = key($frecuenciaNiveles); // Obtener el nivel más común
 
-                    // Contar la frecuencia de cada carrera
-                    // Filtrar el array para eliminar valores no válidos
-                    $niveles = array_filter($carreras, function ($valor) {
-                        return is_string($valor) || is_int($valor);
-                    });
-                    $frecuenciaCarreras = array_count_values($carreras);
-                    arsort($frecuenciaCarreras); // Ordenar de mayor a menor
-                    $CarreraLista = key($frecuenciaCarreras); // Obtener la carrera más común
+                    // // Contar la frecuencia de cada carrera
+                    // // Filtrar el array para eliminar valores no válidos
+                    // $niveles = array_filter($carreras, function ($valor) {
+                    //     return is_string($valor) || is_int($valor);
+                    // });
+                    // $frecuenciaCarreras = array_count_values($carreras);
+                    // arsort($frecuenciaCarreras); // Ordenar de mayor a menor
+                    // $CarreraLista = key($frecuenciaCarreras); // Obtener la carrera más común
                     //SELECCIONAR SU
                     $SeConfirmoRegular=false;
                     foreach ($Lista as $h ) {
@@ -1235,18 +1236,22 @@ class CursoController extends Controller
                             // $CarreraLista = $h->Carrera;
                             // $NivelLista=$h->Nivel;
 
-                            switch ($h->Nivel) {
-                                case 'TECNICO SUPERIOR':
-                                    $NivelLista = 'TECNICO SUPERIOR';
-                                    break;
-                                case 'TECNICO MEDIO':
-                                    $NivelLista = 'TECNICO MEDIO';
-                                    break;
+                            if($NivelxListar=='TECNICO MEDIO Y SUPERIOR'){
 
-                                default:
-                                    $NivelLista = 'CAPACITACION';
-                                    break;
+                                switch ($h->Nivel) {
+                                    case 'TECNICO SUPERIOR':
+                                        $Niveltxt = 'TECNICO SUPERIOR';
+                                        break;
+                                    case 'TECNICO MEDIO':
+                                        $Niveltxt = 'TECNICO MEDIO';
+                                        break;
+
+                                    default:
+                                        $Niveltxt = 'CAPACITACION';
+                                        break;
+                                }
                             }
+
                             $ArrastreLista = $h->Arrastre;
                             if ($h->Arrastre=='REGULAR') {
                                 $SeConfirmoRegular=true;
@@ -1271,10 +1276,11 @@ class CursoController extends Controller
                         $compact[] = $w;
                     }
                 }
+
                 $data=Array(
                     // "Arrastre"=>$ArrastreLista,
-                    "Carrera"=>$CarreraLista,
-                    "Nivel"=>$NivelLista,
+                    "Carrera"=>$Carreratxt,
+                    "Nivel"=>$Niveltxt,
                     "Regimen"=>$RegimenEstudio,
                     "NivelCurso"=>$CursoNivelLista,
                     "Nuevos_M"=>count(collect($compact)->where('Categoria', 'NUEVO')->where('Sexo', 'MASCULINO')->where('Arrastre','REGULAR')->all()),
