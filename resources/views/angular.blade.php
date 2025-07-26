@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-critters-container>
+<html lang="en" data-beasties-container>
 <head>
   <meta charset="utf-8">
   <title>Instituto de Formación Artística</title>
@@ -47,7 +47,7 @@
 <!-- REEMPLAZO FOR PRODUCTION -->
  <!-- TODOS LOS "assets" reemplazar por "assets/angular/browser/assets"
   YANO ES NECESARIA YA Q EN EL PROYECTO ANGULAR HICE Q TENGA LA MISMA RUTA Q EN EL PROD-->
-<link rel="modulepreload" href="/assets/angular/browser/chunk-BOIRNZ36.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-N6H3ZBOR.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-YGQKKRMP.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-SCHOHYNV.js" type="module"></script><script src="/assets/angular/browser/main-X4DJ422W.js" type="module"></script></body>
+<link rel="modulepreload" href="/assets/angular/browser/chunk-NA7K6YNH.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-IUOGLT6C.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-6VOBH2CG.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-B6TNHZQ6.js" type="module"></script><script src="/assets/angular/browser/main-6MB3DXMK.js" type="module"></script></body>
 
 
 <!-- NIEVE -->
