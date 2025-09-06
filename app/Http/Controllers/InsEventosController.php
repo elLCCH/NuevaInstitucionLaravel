@@ -68,36 +68,49 @@ class InsEventosController extends Controller
         $data = $request->all();
         // $inscrito = ins_eventos::findOrFail($id);
         $inscrito = ins_eventos::where('id','=',$id)->firstOrFail();
+        //Boleta_Pago
+        if ($request->hasFile('Boleta_Pago'))
+        {
+            // ELIMINANDO ANTIGUA Boleta_Pago
+            File::delete(public_path().'/'.$inscrito->Boleta_Pago);
+            //REALIZANDO CARGA DE LA NUEVA Boleta_Pago
+            $file = $request->file('Boleta_Pago');
+            $namefile = time().$file->getClientOriginalName();
+            $file->move(public_path().'/BoletasEventos/',$namefile);
+        }
 
-        // if ($request->hasFile('Boleta_Pago'))
-        // {
-        //     // ELIMINANDO ANTIGUA FOTO
-        //     File::delete(public_path().'/'.$inscrito->Boleta_Pago);
-        //     //REALIZANDO CARGA DE LA NUEVA FOTO
-        //     $file = $request->file('Boleta_Pago');
-        //     $namefile = time().$file->getClientOriginalName();
-        //     $file->move(public_path().'/BoletasEventos/',$namefile);
-        // }
-
-        // if ($request->hasFile('Boleta_Pago'))
-        // {//SI TIENE FOTO ENTONCES EN Foto poner sus cosas
-        //     $data['Boleta_Pago'] = 'BoletasEventos/'.$namefile;
-        // }
-        // else
-        // {//SINO TIENE FOTO Y AUN ASI QUIERE ACTUALIZAR
-        //     $data['Boleta_Pago'] = $inscrito->Boleta_Pago;
-        // }
+        if ($request->hasFile('Boleta_Pago'))
+        {//SI TIENE Boleta_Pago ENTONCES EN Boleta_Pago poner sus cosas
+            $data['Boleta_Pago'] = 'BoletasEventos/'.$namefile;
+        }
+        else
+        {//SINO TIENE Boleta_Pago Y AUN ASI QUIERE ACTUALIZAR
+            $data['Boleta_Pago'] = $inscrito->Boleta_Pago;
+        }
 
 
-        try {
+        //Foto
+        if ($request->hasFile('Foto'))
+        {
+            // ELIMINANDO ANTIGUA Foto
+            File::delete(public_path().'/'.$inscrito->Foto);
+            //REALIZANDO CARGA DE LA NUEVA Foto
+            $file = $request->file('Foto');
+            $namefile = time().$file->getClientOriginalName();
+            $file->move(public_path().'/FotoEventos/',$namefile);
+        }
 
-        File::delete(public_path().'/'.$inscrito->Boleta_Pago);
+        if ($request->hasFile('Foto'))
+        {//SI TIENE Foto ENTONCES EN Foto poner sus cosas
+            $data['Foto'] = 'FotoEventos/'.$namefile;
+        }
+        else
+        {//SINO TIENE Foto Y AUN ASI QUIERE ACTUALIZAR
+            $data['Foto'] = $inscrito->Foto;
+        }
+
         ins_eventos::where('id','=',$id)->update($data);
         return response()->json(["mensaje" =>$request], 200);
-        } catch (\Throwable $th) {
-            ins_eventos::where('id','=',$id)->update($data);
-            return response()->json(["mensaje" =>$request], 200);
-        }
     }
     public function destroy($id)
     {
