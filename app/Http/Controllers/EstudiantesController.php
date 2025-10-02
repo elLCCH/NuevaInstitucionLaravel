@@ -756,10 +756,11 @@ class EstudiantesController extends Controller
         $CI = $request->input('CI');
         $pass = $request->input('Password');
 
-        // Extract only the numeric part of the CI
-        $CI = preg_replace('/[^0-9]/', '', $CI);
+        // Solo los números del input
+        $CI_numeric = preg_replace('/[^0-9]/', '', $CI);
 
-        $est = Estudiantes::whereRaw("CAST(CI AS UNSIGNED) = ?", [$CI])->first();
+        // Comparar con la parte numérica de CI en MySQL
+        $est = Estudiantes::whereRaw("SUBSTRING_INDEX(CI, '-', 1) = ?", [$CI_numeric])->first();
 
         if ($est && Hash::check($pass, $est->Password)) {
             return $est;
@@ -767,6 +768,7 @@ class EstudiantesController extends Controller
             return 'NOLOG';
         }
     }
+
     public function EliminarInactivos(Request $request)
     {
 
