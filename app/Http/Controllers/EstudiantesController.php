@@ -753,14 +753,16 @@ class EstudiantesController extends Controller
     }
     public function autentificar(Request $request)
     {
+
+
         $CI = $request->input('CI');
         $pass = $request->input('Password');
 
-        // Solo los números del input
+        // Solo los números del CI ingresado
         $CI_numeric = preg_replace('/[^0-9]/', '', $CI);
 
-        // Comparar con la parte numérica de CI en MySQL
-        $est = Estudiantes::whereRaw("SUBSTRING_INDEX(CI, '-', 1) = ?", [$CI_numeric])->first();
+        // Comparar con CI de la BD convertido a solo números
+        $est = Estudiantes::whereRaw("REGEXP_REPLACE(CI, '[^0-9]', '') = ?", [$CI_numeric])->first();
 
         if ($est && Hash::check($pass, $est->Password)) {
             return $est;
@@ -768,7 +770,6 @@ class EstudiantesController extends Controller
             return 'NOLOG';
         }
     }
-
     public function EliminarInactivos(Request $request)
     {
 
