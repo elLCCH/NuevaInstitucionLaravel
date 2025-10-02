@@ -753,23 +753,18 @@ class EstudiantesController extends Controller
     }
     public function autentificar(Request $request)
     {
-
-
-        //FINISH
         $CI = $request->input('CI');
         $pass = $request->input('Password');
-        $est = Estudiantes::where('CI','=', $CI)->first();
 
+        // Extract only the numeric part of the CI
+        $CI = preg_replace('/[^0-9]/', '', $CI);
 
-        if (Hash::check($pass, $est->Password)) {
+        $est = Estudiantes::whereRaw("CAST(CI AS UNSIGNED) = ?", [$CI])->first();
 
+        if ($est && Hash::check($pass, $est->Password)) {
             return $est;
-        }
-        else
-        {
-            // return $admin;
+        } else {
             return 'NOLOG';
-
         }
     }
     public function EliminarInactivos(Request $request)
