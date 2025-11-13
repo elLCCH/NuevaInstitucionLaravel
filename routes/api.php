@@ -81,6 +81,8 @@ Route::post('PruebaExistencia', 'App\Http\Controllers\AdministrativosCursosContr
 Route::resource('Administrativo', 'App\Http\Controllers\AdministrativosController');
 Route::post('AdministrativoAUTH', 'App\Http\Controllers\AdministrativosController@autentificar');
 Route::get('DiferenciadorIndex', 'App\Http\Controllers\AdministrativosController@DiferenciadorIndex');
+Route::post('getdocentesteoricos', 'App\Http\Controllers\AdministrativosController@getdocentesteoricos');
+Route::post('getdocentesespecialidades', 'App\Http\Controllers\AdministrativosController@getdocentesespecialidades');
 Route::post('EncontrarDocenteEspecialidad/{admin}', 'App\Http\Controllers\AdministrativosController@EncontrarDocenteEspecialidad');
 Route::post('AdministrativoUpdate/{admin}', 'App\Http\Controllers\AdministrativosController@actualizar');
 /*PUBLICACIONES*/

@@ -286,33 +286,35 @@ class CalificacionesController extends Controller
             }
 
             //YA TENEMOS LISTOS LOS CONTADORES DE MATERIAS Y LOS CONTADORES DE APROBS REPROBADOS Y RETIRADOS DE MATERIAS DEL ESTUDIANTE
+            //NUEVAS REGLAS DEL JUEGO: DESDE AHORA LA COLUMNA ESTADO SERA EL PROMOVIDO========================!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             if ($contadorRetirados==$contadorMaterias) {
-                //EL ESTUDIANTE SE RETIRÓ EN TODAS LAS MATERIAS, ENTONCES ES RETIRADO
-                $resPromovidos[] = 'NO';
-                $resObservaciones[] = 'RETIRADO';
+                //EL ESTUDIANTE SE RETIRÓ EN TODAS LAS MATERIAS, ENTONCES ES ABANDONO
+                //$$$APLICACION DE LA REGLA 3 LISTA
+                $resPromovidos[] = 'ABANDONO'; 
+                $resObservaciones[] = ' ';
                 $resFechas[] = (string)$fecha;
             }else if($contadorAprobados == $contadorMaterias){
                 //EL ESTUDIANTE APROBÓ TODAS LAS MATERIAS, ENTONCES ES APROBADO
                 if(str_contains($lvlCurso,'MEDIO')){//SI lvlCurso SE SELECCIONO LVL TECNICO MEDIO HACER
                     //NORMAL SIGUE SIENDO TECNICO MEDIO EL lvlCurso
                     if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A SEGUNDO O A SEGUNDO AÑO
-                        $resPromovidos[] = 'NO';
-                        $resObservaciones[] = 'APROBÓ';
+                        $resPromovidos[] = 'APROBADO';
+                        $resObservaciones[] = ' ';
                         $resFechas[] = ' ';
                     }else{
-                        $resPromovidos[] = 'SI';
-                        $resObservaciones[] = 'APROBÓ';
+                        $resPromovidos[] = 'APROBADO';
+                        $resObservaciones[] = ' ';
                         $resFechas[] = ' ';
                     }
                 }else{
                     //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
                     if (str_contains($cursoMayoria, 'TERCER')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
-                        $resPromovidos[] = 'NO';
-                        $resObservaciones[] = 'APROBÓ';
+                        $resPromovidos[] = 'APROBADO';
+                        $resObservaciones[] = ' ';
                         $resFechas[] = ' ';
                     }else{
-                        $resPromovidos[] = 'SI';
-                        $resObservaciones[] = 'APROBÓ';
+                        $resPromovidos[] = 'APROBADO';
+                        $resObservaciones[] = ' ';
                         $resFechas[] = ' ';
                     }
                 }
@@ -320,10 +322,11 @@ class CalificacionesController extends Controller
                 //ANALISIS RESPECTO A LAS REGLAS SELECCIONADAS
                 switch ($reglaInstancia) {
                     case 'TECNICO SUPERIOR': //SELECCIONO REGLA DE HASTA 3 ARRASTRES
-                        if (($contadorReprobados+$contadorRetirados)>3) {
-                            //EL ESTUDIANTE REPROBÓ MAS DE 3 MATERIAS, ENTONCES REPRUEBA TODO
-                            $resPromovidos[] = 'NO';
-                            $resObservaciones[] = 'REPROBADO';
+                        if (($contadorReprobados+$contadorRetirados)>=3) {
+                            //EL ESTUDIANTE REPROBÓ 3 O MAS MATERIAS, ENTONCES REPRUEBA 
+                            //REGLA 2 
+                            $resPromovidos[] = 'REPROBADO';
+                            $resObservaciones[] = ' ';
                             $resFechas[] = ' ';
                         }else{
                         //APROBÓ CON ARRASTRE, ESTA DENTRO DEL RANGO y ES PROMOVIDO
@@ -333,24 +336,24 @@ class CalificacionesController extends Controller
 
                                 if(str_contains($lvlCurso,'MEDIO')){//SI lvlCurso SE SELECCIONO LVL TECNICO MEDIO HACER
                                     //NORMAL SIGUE SIENDO TECNICO MEDIO EL lvlCurso
-                                    if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A SEGUNDO O A SEGUNDO AÑO
-                                        $resPromovidos[] = 'NO';
-                                        $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    if (($contadorReprobados+$contadorRetirados)==1) { //HACE REFERENCIA A SEGUNDO O A SEGUNDO AÑO
+                                        $resPromovidos[] = 'APROBADO';
+                                        $resObservaciones[] = 'PENDIENTE, DEBE UNA ASIGNATURA';
                                         $resFechas[] = ' ';
                                     }else{
-                                        $resPromovidos[] = 'SI';
-                                        $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                        $resPromovidos[] = 'APROBADO';
+                                        $resObservaciones[] = 'PENDIENTE, DEBE DOS ASIGNATURAS';
                                         $resFechas[] = ' ';
                                     }
                                 }else{
                                     //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
-                                    if (str_contains($cursoMayoria, 'TERCER')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
-                                        $resPromovidos[] = 'NO';
-                                        $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    if (($contadorReprobados+$contadorRetirados)==1) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                        $resPromovidos[] = 'APROBADO';
+                                        $resObservaciones[] = 'PENDIENTE, DEBE UNA ASIGNATURA';
                                         $resFechas[] = ' ';
                                     }else{
-                                        $resPromovidos[] = 'SI';
-                                        $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                        $resPromovidos[] = 'APROBADO';
+                                        $resObservaciones[] = 'PENDIENTE, DEBE DOS ASIGNATURAS';
                                         $resFechas[] = ' ';
                                     }
                                 }
@@ -372,83 +375,93 @@ class CalificacionesController extends Controller
                         }
                         break;
                     case 'TECNICO MEDIO': //SELECCIONO REGLA DE HASTA 2 ARRASTRES
-                        if (($contadorReprobados+$contadorRetirados)>2) {
+                        if (($contadorReprobados+$contadorRetirados)>=2) {
                             //EL ESTUDIANTE REPROBÓ MAS DE 2 MATERIAS, ENTONCES REPRUEBA TODO
-                            $resPromovidos[] = 'NO';
-                            $resObservaciones[] = 'REPROBADO';
+                            $resPromovidos[] = 'REPROBADO';
+                            $resObservaciones[] = ' ';
                             $resFechas[] = ' ';
                         }else{
                         //APROBÓ CON ARRASTRE, ESTA DENTRO DEL RANGO y ES PROMOVIDO
                             //HACIENDO PRUEBAS DE SI ES EL ULTIMO CURSO
                             if ($regimen=='ANUALIZADO') { //SI ES ANUALIZADO
                                 //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
-                                if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
-                                    $resPromovidos[] = 'NO';
-                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
-                                    $resFechas[] = ' ';
-                                }else{
-                                    $resPromovidos[] = 'SI';
-                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
-                                    $resFechas[] = ' ';
-                                }
+                                if (($contadorReprobados+$contadorRetirados)==1) { //HACE REFERENCIA A SEGUNDO O A SEGUNDO AÑO
+                                        $resPromovidos[] = 'APROBADO';
+                                        $resObservaciones[] = 'PENDIENTE, DEBE UNA ASIGNATURA';
+                                        $resFechas[] = ' ';
+                                    }else{
+                                        $resPromovidos[] = 'APROBADO';
+                                        $resObservaciones[] = 'PENDIENTE, DEBE DOS ASIGNATURAS';
+                                        $resFechas[] = ' ';
+                                    }
                             }else{
                                 //ES SEMESTRALIZADO
                                 //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
-                                if (str_contains($cursoMayoria, 'SEXTO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
-                                    $resPromovidos[] = 'NO';
-                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
-                                    $resFechas[] = ' ';
-                                }else{
-                                    $resPromovidos[] = 'SI';
-                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
-                                    $resFechas[] = ' ';
-                                }
+                                //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
+                                    if (($contadorReprobados+$contadorRetirados)==1) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                        $resPromovidos[] = 'APROBADO';
+                                        $resObservaciones[] = 'PENDIENTE, DEBE UNA ASIGNATURA';
+                                        $resFechas[] = ' ';
+                                    }else{
+                                        $resPromovidos[] = 'APROBADO';
+                                        $resObservaciones[] = 'PENDIENTE, DEBE DOS ASIGNATURAS';
+                                        $resFechas[] = ' ';
+                                    }
                             }
                         }
                         break;
                     case 'CAPACITACION': //PARA CAPACITACION //SELECCIONO REGLA DE HASTA 0 ARRASTRES
                         if (($contadorReprobados+$contadorRetirados)>0) {
                             //EL ESTUDIANTE REPROBÓ MAS DE 0 MATERIAS, ENTONCES REPRUEBA TODO
-                            $resPromovidos[] = 'NO';
-                            $resObservaciones[] = 'REPROBADO';
+                            $resPromovidos[] = 'REPROBADO';
+                            $resObservaciones[] = ' ';
                             $resFechas[] = ' ';
                         }else{
                             //ENTONCES OBVIAMENTE APROBÓ
-                            $resPromovidos[] = 'SI';
-                            $resObservaciones[] = 'APROBÓ';
+                            $resPromovidos[] = 'APROBADO';
+                            $resObservaciones[] = ' ';
                             $resFechas[] = ' ';
                         }
                         break;
                     default: //POR DEFECTO SERIA LA REGLA CON 3 MATERIAS
                         if (($contadorReprobados+$contadorRetirados)>3) {
                             //EL ESTUDIANTE REPROBÓ MAS DE 3 MATERIAS, ENTONCES REPRUEBA TODO
-                            $resPromovidos[] = 'NO';
-                            $resObservaciones[] = 'REPROBADO';
+                            $resPromovidos[] = 'REPROBADO';
+                            $resObservaciones[] = ' ';
                             $resFechas[] = ' ';
                         }else{
                         //APROBÓ CON ARRASTRE, ESTA DENTRO DEL RANGO y ES PROMOVIDO
                             //HACIENDO PRUEBAS DE SI ES EL ULTIMO CURSO
                             if ($regimen=='ANUALIZADO') { //SI ES ANUALIZADO
                                 //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
-                                if (str_contains($cursoMayoria, 'TERCER')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
-                                    $resPromovidos[] = 'NO';
-                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                if (($contadorReprobados+$contadorRetirados)==1) { //HACE REFERENCIA A SEGUNDO O A SEGUNDO AÑO
+                                    $resPromovidos[] = 'APROBADO';
+                                    $resObservaciones[] = 'PENDIENTE, DEBE UNA ASIGNATURA';
+                                    $resFechas[] = ' ';
+                                }else  if (($contadorReprobados+$contadorRetirados)==2){
+                                    $resPromovidos[] = 'APROBADO';
+                                    $resObservaciones[] = 'PENDIENTE, DEBE DOS ASIGNATURAS';
                                     $resFechas[] = ' ';
                                 }else{
-                                    $resPromovidos[] = 'SI';
-                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resPromovidos[] = 'APROBADO';
+                                    $resObservaciones[] = 'PENDIENTE, DEBE TRES ASIGNATURAS';
                                     $resFechas[] = ' ';
                                 }
                             }else{
                                 //ES SEMESTRALIZADO
                                 //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
-                                if (str_contains($cursoMayoria, 'SEXTO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
-                                    $resPromovidos[] = 'NO';
-                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
+                                if (($contadorReprobados+$contadorRetirados)==1) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+                                    $resPromovidos[] = 'APROBADO';
+                                    $resObservaciones[] = 'PENDIENTE, DEBE UNA ASIGNATURA';
+                                    $resFechas[] = ' ';
+                                }else  if (($contadorReprobados+$contadorRetirados)==2){
+                                    $resPromovidos[] = 'APROBADO';
+                                    $resObservaciones[] = 'PENDIENTE, DEBE DOS ASIGNATURAS';
                                     $resFechas[] = ' ';
                                 }else{
-                                    $resPromovidos[] = 'SI';
-                                    $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+                                    $resPromovidos[] = 'APROBADO';
+                                    $resObservaciones[] = 'PENDIENTE, DEBE TRES ASIGNATURAS';
                                     $resFechas[] = ' ';
                                 }
                             }
@@ -456,6 +469,177 @@ class CalificacionesController extends Controller
                         break;
                 }
             }
+            //ANTIGUAS REGLAS DEL JUEGO
+            // if ($contadorRetirados==$contadorMaterias) {
+            //     //EL ESTUDIANTE SE RETIRÓ EN TODAS LAS MATERIAS, ENTONCES ES RETIRADO
+            //     $resPromovidos[] = 'NO';
+            //     $resObservaciones[] = 'RETIRADO';
+            //     $resFechas[] = (string)$fecha;
+            // }else if($contadorAprobados == $contadorMaterias){
+            //     //EL ESTUDIANTE APROBÓ TODAS LAS MATERIAS, ENTONCES ES APROBADO
+            //     if(str_contains($lvlCurso,'MEDIO')){//SI lvlCurso SE SELECCIONO LVL TECNICO MEDIO HACER
+            //         //NORMAL SIGUE SIENDO TECNICO MEDIO EL lvlCurso
+            //         if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A SEGUNDO O A SEGUNDO AÑO
+            //             $resPromovidos[] = 'NO';
+            //             $resObservaciones[] = 'APROBÓ';
+            //             $resFechas[] = ' ';
+            //         }else{
+            //             $resPromovidos[] = 'SI';
+            //             $resObservaciones[] = 'APROBÓ';
+            //             $resFechas[] = ' ';
+            //         }
+            //     }else{
+            //         //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
+            //         if (str_contains($cursoMayoria, 'TERCER')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+            //             $resPromovidos[] = 'NO';
+            //             $resObservaciones[] = 'APROBÓ';
+            //             $resFechas[] = ' ';
+            //         }else{
+            //             $resPromovidos[] = 'SI';
+            //             $resObservaciones[] = 'APROBÓ';
+            //             $resFechas[] = ' ';
+            //         }
+            //     }
+            // }else{
+            //     //ANALISIS RESPECTO A LAS REGLAS SELECCIONADAS
+            //     switch ($reglaInstancia) {
+            //         case 'TECNICO SUPERIOR': //SELECCIONO REGLA DE HASTA 3 ARRASTRES
+            //             if (($contadorReprobados+$contadorRetirados)>3) {
+            //                 //EL ESTUDIANTE REPROBÓ MAS DE 3 MATERIAS, ENTONCES REPRUEBA TODO
+            //                 $resPromovidos[] = 'NO';
+            //                 $resObservaciones[] = 'REPROBADO';
+            //                 $resFechas[] = ' ';
+            //             }else{
+            //             //APROBÓ CON ARRASTRE, ESTA DENTRO DEL RANGO y ES PROMOVIDO
+            //                 //HACIENDO PRUEBAS DE SI ES EL ULTIMO CURSO
+            //                 if ($regimen=='ANUALIZADO') { //SI ES ANUALIZADO
+            //                     //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+
+            //                     if(str_contains($lvlCurso,'MEDIO')){//SI lvlCurso SE SELECCIONO LVL TECNICO MEDIO HACER
+            //                         //NORMAL SIGUE SIENDO TECNICO MEDIO EL lvlCurso
+            //                         if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A SEGUNDO O A SEGUNDO AÑO
+            //                             $resPromovidos[] = 'NO';
+            //                             $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                             $resFechas[] = ' ';
+            //                         }else{
+            //                             $resPromovidos[] = 'SI';
+            //                             $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                             $resFechas[] = ' ';
+            //                         }
+            //                     }else{
+            //                         //NORMAL SIGUE SIENDO TECNICO SUPERIOR EL lvlCurso
+            //                         if (str_contains($cursoMayoria, 'TERCER')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+            //                             $resPromovidos[] = 'NO';
+            //                             $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                             $resFechas[] = ' ';
+            //                         }else{
+            //                             $resPromovidos[] = 'SI';
+            //                             $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                             $resFechas[] = ' ';
+            //                         }
+            //                     }
+
+
+            //                 }else{
+            //                     //ES SEMESTRALIZADO
+            //                     //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+            //                     if (str_contains($cursoMayoria, 'SEXTO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+            //                         $resPromovidos[] = 'NO';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }else{
+            //                         $resPromovidos[] = 'SI';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }
+            //                 }
+            //             }
+            //             break;
+            //         case 'TECNICO MEDIO': //SELECCIONO REGLA DE HASTA 2 ARRASTRES
+            //             if (($contadorReprobados+$contadorRetirados)>2) {
+            //                 //EL ESTUDIANTE REPROBÓ MAS DE 2 MATERIAS, ENTONCES REPRUEBA TODO
+            //                 $resPromovidos[] = 'NO';
+            //                 $resObservaciones[] = 'REPROBADO';
+            //                 $resFechas[] = ' ';
+            //             }else{
+            //             //APROBÓ CON ARRASTRE, ESTA DENTRO DEL RANGO y ES PROMOVIDO
+            //                 //HACIENDO PRUEBAS DE SI ES EL ULTIMO CURSO
+            //                 if ($regimen=='ANUALIZADO') { //SI ES ANUALIZADO
+            //                     //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+            //                     if (str_contains($cursoMayoria, 'SEGUNDO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+            //                         $resPromovidos[] = 'NO';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }else{
+            //                         $resPromovidos[] = 'SI';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }
+            //                 }else{
+            //                     //ES SEMESTRALIZADO
+            //                     //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+            //                     if (str_contains($cursoMayoria, 'SEXTO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+            //                         $resPromovidos[] = 'NO';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }else{
+            //                         $resPromovidos[] = 'SI';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }
+            //                 }
+            //             }
+            //             break;
+            //         case 'CAPACITACION': //PARA CAPACITACION //SELECCIONO REGLA DE HASTA 0 ARRASTRES
+            //             if (($contadorReprobados+$contadorRetirados)>0) {
+            //                 //EL ESTUDIANTE REPROBÓ MAS DE 0 MATERIAS, ENTONCES REPRUEBA TODO
+            //                 $resPromovidos[] = 'NO';
+            //                 $resObservaciones[] = 'REPROBADO';
+            //                 $resFechas[] = ' ';
+            //             }else{
+            //                 //ENTONCES OBVIAMENTE APROBÓ
+            //                 $resPromovidos[] = 'SI';
+            //                 $resObservaciones[] = 'APROBÓ';
+            //                 $resFechas[] = ' ';
+            //             }
+            //             break;
+            //         default: //POR DEFECTO SERIA LA REGLA CON 3 MATERIAS
+            //             if (($contadorReprobados+$contadorRetirados)>3) {
+            //                 //EL ESTUDIANTE REPROBÓ MAS DE 3 MATERIAS, ENTONCES REPRUEBA TODO
+            //                 $resPromovidos[] = 'NO';
+            //                 $resObservaciones[] = 'REPROBADO';
+            //                 $resFechas[] = ' ';
+            //             }else{
+            //             //APROBÓ CON ARRASTRE, ESTA DENTRO DEL RANGO y ES PROMOVIDO
+            //                 //HACIENDO PRUEBAS DE SI ES EL ULTIMO CURSO
+            //                 if ($regimen=='ANUALIZADO') { //SI ES ANUALIZADO
+            //                     //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+            //                     if (str_contains($cursoMayoria, 'TERCER')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+            //                         $resPromovidos[] = 'NO';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }else{
+            //                         $resPromovidos[] = 'SI';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }
+            //                 }else{
+            //                     //ES SEMESTRALIZADO
+            //                     //SI ES EL ULTIMO CURSO YA NO PONER APROBO ARRASTRE SINO REPROBADO
+            //                     if (str_contains($cursoMayoria, 'SEXTO')) { //HACE REFERENCIA A TERCERO SUPERIOR O A TERCER AÑO
+            //                         $resPromovidos[] = 'NO';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }else{
+            //                         $resPromovidos[] = 'SI';
+            //                         $resObservaciones[] = 'APROBÓ C/ ARRASTRE';
+            //                         $resFechas[] = ' ';
+            //                     }
+            //                 }
+            //             }
+            //             break;
+            //     }
+            // }
 
 
 
