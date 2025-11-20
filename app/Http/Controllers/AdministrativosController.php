@@ -29,17 +29,25 @@ class AdministrativosController extends Controller
         $NivelCurso =$request->input('NivelCurso');
         $Malla =$request->input('Malla');
         
-        $docentesteoricos =  DB::select("SELECT c.NombreCurso,c.NivelCurso,c.Tipo,c.Malla,anio.Anio, a.Nombre, a.Ap_Paterno, a.Ap_Materno
+        $docentesteoricos =  DB::select("SELECT c.NombreCurso,c.NivelCurso,c.Tipo,c.Malla,anio.Anio, a.Nombre, a.Ap_Paterno, a.Ap_Materno, c.Rango
         FROM cursos c, administrativos__cursos ac, administrativos a, anios anio 
-        WHERE c.id = ac.Curso_id and ac.Admin_id = a.id AND anio.id = c.Anio_id AND anio.Anio = $Anio AND c.NivelCurso = '$NivelCurso' AND c.Malla = '$Malla' ORDER BY Rango ASC"); 
-        return $docentesteoricos;
+        WHERE c.id = ac.Curso_id and ac.Admin_id = a.id AND anio.id = c.Anio_id AND anio.Anio = $Anio AND c.NivelCurso = '$NivelCurso' AND c.Malla = '$Malla'  ORDER BY Rango ASC"); 
+
+        $docentesEspecialidad =  DB::select("SELECT DISTINCT c.NombreCurso,c.NivelCurso,c.Tipo,c.Malla,anio.Anio, a.Nombre, a.Ap_Paterno, a.Ap_Materno,e.Especialidad, c.Rango
+        FROM cursos c, calificaciones calif, administrativos a, anios anio , estudiantes e 
+        WHERE anio.id = c.Anio_id and c.id = calif.curso_id and calif.estudiante_id = e.id AND e.Admin_id = a.id AND anio.Anio = $Anio AND c.NivelCurso = '$NivelCurso' AND c.Malla = '$Malla' AND c.NombreCurso LIKE '%ESPECIALIDAD%' ORDER BY a.Ap_Paterno, a.Ap_Materno,a.Nombre DESC");
+
+        return response()->json([
+            'datateoricos' => $docentesteoricos,
+            'dataespeacialidad' => $docentesEspecialidad
+        ]);
     }
     public function getdocentesespecialidades(Request $request)
     {
         $Anio =$request->input('Anio');
         $NivelCurso =$request->input('NivelCurso');
         $Malla =$request->input('Malla');
-        $administrativo =  DB::select("SELECT DISTINCT c.NombreCurso,c.NivelCurso,c.Tipo,c.Malla,anio.Anio, a.Nombre, a.Ap_Paterno, a.Ap_Materno,e.Especialidad
+        $administrativo =  DB::select("SELECT DISTINCT c.NombreCurso,c.NivelCurso,c.Tipo,c.Malla,anio.Anio, a.Nombre, a.Ap_Paterno, a.Ap_Materno,e.Especialidad, c.Rango
         FROM cursos c, calificaciones calif, administrativos a, anios anio , estudiantes e 
         WHERE anio.id = c.Anio_id and c.id = calif.curso_id and calif.estudiante_id = e.id AND e.Admin_id = a.id AND anio.Anio = $Anio AND c.NivelCurso = '$NivelCurso' AND c.Malla = '$Malla' AND c.NombreCurso LIKE '%ESPECIALIDAD%' ORDER BY a.Ap_Paterno, a.Ap_Materno,a.Nombre DESC");
         return $administrativo;
