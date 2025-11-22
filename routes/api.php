@@ -15,6 +15,7 @@ Route::post('updatePlan/{id}', 'App\Http\Controllers\PlanesController@updatePlan
 Route::get('DeterminarInstituto', 'App\Http\Controllers\AnioController@DeterminarInstituto');
 Route::get('ObtenerLogo', 'App\Http\Controllers\AnioController@ObtenerLogo');
 Route::get('ObtenerMinisterio', 'App\Http\Controllers\AnioController@ObtenerMinisterio');
+Route::get('ObtenerMinisterioEscudo', 'App\Http\Controllers\AnioController@ObtenerMinisterioEscudo');
 Route::get('indexAll', 'App\Http\Controllers\AnioController@indexAll');
 Route::get('ObtenerGestionPredeterminada', 'App\Http\Controllers\AnioController@ObtenerGestionPredeterminada');
 Route::resource('Anio', 'App\Http\Controllers\AnioController');

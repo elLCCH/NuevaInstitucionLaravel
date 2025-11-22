@@ -47,7 +47,7 @@
 <!-- REEMPLAZO FOR PRODUCTION -->
  <!-- TODOS LOS "assets" reemplazar por "assets/angular/browser/assets"
   YANO ES NECESARIA YA Q EN EL PROYECTO ANGULAR HICE Q TENGA LA MISMA RUTA Q EN EL PROD-->
-<link rel="modulepreload" href="/assets/angular/browser/chunk-NA7K6YNH.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-IUOGLT6C.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-6VOBH2CG.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-B6TNHZQ6.js" type="module"></script><script src="/assets/angular/browser/main-E66QQTW4.js" type="module"></script></body>
+<link rel="modulepreload" href="/assets/angular/browser/chunk-IKTZ5JRM.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-VTTWHQO7.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-BT4KJGND.js"><link rel="modulepreload" href="/assets/angular/browser/chunk-O7S4L63H.js"><script src="/assets/angular/browser/polyfills-B6TNHZQ6.js" type="module"></script><script src="/assets/angular/browser/main-YOCXBXEL.js" type="module"></script></body>
 
 
 <!-- NIEVE -->
