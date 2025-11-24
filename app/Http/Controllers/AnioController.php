@@ -22,7 +22,7 @@ class AnioController extends Controller
 
         // Comprobar si estamos en local
         if (in_array($host, ['localhost', '127.0.0.1'])) {
-            return 'MARIA LUISA LUZIO'; // Instituto por defecto en local
+            return 'BELLAS ARTES ORURO'; // Instituto por defecto en local
         }
 
         $subdomain = explode('.', $host)[0]; // ej: ifafolkloreoruro
