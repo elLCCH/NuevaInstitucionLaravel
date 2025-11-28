@@ -15,17 +15,19 @@ class AnioController extends Controller
      */
     public function DeterminarInstituto()
     {
-        // return 'MARIA LUISA LUZIO';
-        // return 'DEL FOLKLORE ORURO';
-        // return 'BELLAS ARTES ORURO';
-        $host = request()->getHost(); // ej: localhost o ifamarialuisaluzio.edu.bo
+        $host = request()->getHost(); // ej: localhost, www.ifamarialuisaluzio.edu.bo
 
         // Comprobar si estamos en local
         if (in_array($host, ['localhost', '127.0.0.1'])) {
             return 'BELLAS ARTES ORURO'; // Instituto por defecto en local
         }
 
-        $subdomain = explode('.', $host)[0]; // ej: ifafolkloreoruro
+        // Eliminar 'www.' si existe
+        if (strpos($host, 'www.') === 0) {
+            $host = substr($host, 4);
+        }
+
+        $subdomain = explode('.', $host)[0]; // ej: ifamarialuisaluzio
         $clave = str_replace('ifa', '', $subdomain);
 
         $institutos = [
