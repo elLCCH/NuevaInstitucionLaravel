@@ -19,7 +19,7 @@ class AnioController extends Controller
 
         // Comprobar si estamos en local
         if (in_array($host, ['localhost', '127.0.0.1'])) {
-            return 'BELLAS ARTES ORURO'; // Instituto por defecto en local
+            return 'MARIA LUISA LUZIO'; // Instituto por defecto en local
         }
 
         // Eliminar 'www.' si existe
