@@ -1743,102 +1743,105 @@ class CalificacionesController extends Controller
         return $requestData;
     }
     public function ActualizarCalificacionesCurso(Request $request)
-    {
-        $dataCalificaciones = $request->all();
-        // for ($i=0; $i < count($dataCalificaciones); $i++) {
-
-        // }
-        foreach ($dataCalificaciones as $c ) {
-                // $calif = new Calificaciones();
-            $getEst=Estudiantes::where('CI', '=', $c['CI'])->firstOrFail();
-            $getIDCalif= Calificaciones::where('anio_id','=',$c['anio_id'])->where('curso_id','=',$c['curso_id'])->where('estudiante_id','=',$getEst['id'])->firstOrFail();
-            // $Carnet = $getIDCalif;
-            // $Carnet = $getIDCalif['id'];
-            $evaluacion = $c['Evaluacion'];
-            try {
-                switch ($evaluacion) {
-                    case 'PRIMERA EVALUACION':
-                        $updateData = [
-                            'Practica1' => intval($c['Practica1']),
-                            'Teorica1' => intval($c['Teorica1']),
-                            'PromEvP' => $c['PromEvP'],
-                            'PromEvT' => $c['PromEvT'],
-                            'Promedio' => $c['Promedio'],
-                            'anio_id' => intval($c['anio_id']),
-                            'curso_id' => $c['curso_id']
-                        ];
-
-                        break;
-                    case 'SEGUNDA EVALUACION':
-                        $updateData = [
-                            'Practica2' => intval($c['Practica2']),
-                            'Teorica2' => intval($c['Teorica2']),
-                            'PromEvP' => $c['PromEvP'],
-                            'PromEvT' => $c['PromEvT'],
-                            'Promedio' => $c['Promedio'],
-                            'anio_id' => intval($c['anio_id']),
-                            'curso_id' => $c['curso_id']
-                        ];
-                        break;
-                    case 'TERCERA EVALUACION':
-                        $updateData = [
-                            'Practica3' => intval($c['Practica3']),
-                            'Teorica3' => intval($c['Teorica3']),
-                            'PromEvP' => $c['PromEvP'],
-                            'PromEvT' => $c['PromEvT'],
-                            'Promedio' => $c['Promedio'],
-                            'anio_id' => intval($c['anio_id']),
-                            'curso_id' => $c['curso_id']
-                        ];
-                        break;
-                    case 'CUARTA EVALUACION':
-                        $updateData = [
-                            'Practica4' => intval($c['Practica4']),
-                            'Teorica4' => intval($c['Teorica4']),
-                            'PromEvP' => $c['PromEvP'],
-                            'PromEvT' => $c['PromEvT'],
-                            'Promedio' => $c['Promedio'],
-                            'anio_id' => intval($c['anio_id']),
-                            'curso_id' => $c['curso_id']
-                        ];
-                        break;
-                    case 'SEGUNDA INSTANCIA':
-                        $updateData = [
-                            'PromEvP' => $c['PromEvP'],
-                            'PromEvT' => $c['PromEvT'],
-                            'Promedio' => $c['Promedio'],
-                            'PruebaRecuperacion' => $c['PruebaRecuperacion'],
-                            'anio_id' => intval($c['anio_id']),
-                            'curso_id' => $c['curso_id']
-                        ];
-                        break;
-                    case 'SEMESTRALIZADO':
-                        $updateData = [
-
-                            'PromEvP' => $c['PromEvP'],
-                            'PromEvT' => $c['PromEvT'],
-                            'Promedio' => $c['Promedio'],
-                            'PruebaRecuperacion' => $c['PruebaRecuperacion'],
-                            'anio_id' => intval($c['anio_id']),
-                            'curso_id' => $c['curso_id']
-                        ];
-                        break;
-                    default:
-                        # code...
-                        break;
-                }
-
-                Calificaciones::where('id', $getIDCalif['id'])->update($updateData);
-            } catch (\Throwable $th) {
-                //NO SE ENCONTRO EL CARNET; PERO SEGUIMOS SGTE ITERACION
-                continue;
+{
+    $dataCalificaciones = $request->all();
+    
+    foreach ($dataCalificaciones as $c) {
+        try {
+            $getEst = Estudiantes::where('CI', '=', $c['CI'])->first();
+            
+            if (!$getEst) {
+                continue; // Si no existe el estudiante, saltamos a la siguiente iteración
             }
-
-
-
+            
+            $getIDCalif = Calificaciones::where('anio_id', '=', $c['anio_id'])
+                ->where('curso_id', '=', $c['curso_id'])
+                ->where('estudiante_id', '=', $getEst->id)
+                ->first();
+            
+            if (!$getIDCalif) {
+                // Crear nueva calificación si no existe
+                $getIDCalif = new Calificaciones();
+                $getIDCalif->anio_id = $c['anio_id'];
+                $getIDCalif->curso_id = $c['curso_id'];
+                $getIDCalif->estudiante_id = $getEst->id;
+                $getIDCalif->save();
+            }
+            
+            $evaluacion = $c['Evaluacion'];
+            
+            switch ($evaluacion) {
+                case 'PRIMERA EVALUACION':
+                    $updateData = [
+                        'Practica1' => intval($c['Practica1']),
+                        'Teorica1' => intval($c['Teorica1']),
+                        'PromEvP' => $c['PromEvP'],
+                        'PromEvT' => $c['PromEvT'],
+                        'Promedio' => $c['Promedio'],
+                    ];
+                    break;
+                case 'SEGUNDA EVALUACION':
+                    $updateData = [
+                        'Practica2' => intval($c['Practica2']),
+                        'Teorica2' => intval($c['Teorica2']),
+                        'PromEvP' => $c['PromEvP'],
+                        'PromEvT' => $c['PromEvT'],
+                        'Promedio' => $c['Promedio'],
+                    ];
+                    break;
+                case 'TERCERA EVALUACION':
+                    $updateData = [
+                        'Practica3' => intval($c['Practica3']),
+                        'Teorica3' => intval($c['Teorica3']),
+                        'PromEvP' => $c['PromEvP'],
+                        'PromEvT' => $c['PromEvT'],
+                        'Promedio' => $c['Promedio'],
+                    ];
+                    break;
+                case 'CUARTA EVALUACION':
+                    $updateData = [
+                        'Practica4' => intval($c['Practica4']),
+                        'Teorica4' => intval($c['Teorica4']),
+                        'PromEvP' => $c['PromEvP'],
+                        'PromEvT' => $c['PromEvT'],
+                        'Promedio' => $c['Promedio'],
+                    ];
+                    break;
+                case 'SEGUNDA INSTANCIA':
+                    $updateData = [
+                        'PromEvP' => $c['PromEvP'],
+                        'PromEvT' => $c['PromEvT'],
+                        'Promedio' => $c['Promedio'],
+                        'PruebaRecuperacion' => $c['PruebaRecuperacion'],
+                    ];
+                    break;
+                case 'SEMESTRALIZADO':
+                    $updateData = [
+                        'PromEvP' => $c['PromEvP'],
+                        'PromEvT' => $c['PromEvT'],
+                        'Promedio' => $c['Promedio'],
+                        'PruebaRecuperacion' => $c['PruebaRecuperacion'],
+                    ];
+                    break;
+                default:
+                    continue 2; // Saltar a la siguiente iteración del foreach
+            }
+            
+            // Actualizar la calificación
+            Calificaciones::where('id', $getIDCalif->id)->update($updateData);
+            
+        } catch (\Throwable $th) {
+            // Registrar el error si es necesario
+            // \Log::error('Error actualizando calificación: ' . $th->getMessage());
+            continue;
         }
-        return $dataCalificaciones;
     }
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Calificaciones actualizadas correctamente'
+    ]);
+}
 
     /**
      * Remove the specified resource from storage.
