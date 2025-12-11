@@ -51,7 +51,7 @@
 
 
 <!-- NIEVE -->
-<!-- <style>
+<style>
   body {
     margin: 0;
   }
@@ -139,7 +139,7 @@
     content: '<img src="/fijos/nieve.png" alt="snowflake" width="50px"/>',
     size: { min: 20, max: 50 }
   });
-</script> -->
+</script>
 
 <!-- NIEVE HASTA ACA -->
 </html>
