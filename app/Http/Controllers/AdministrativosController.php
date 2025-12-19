@@ -25,23 +25,62 @@ class AdministrativosController extends Controller
     }
     public function getdocentesteoricos(Request $request)
     {
-        $Anio =$request->input('Anio');
-        $NivelCurso =$request->input('NivelCurso');
-        $Malla =$request->input('Malla');
+        // $Anio =$request->input('Anio');
+        // $NivelCurso =$request->input('NivelCurso');
+        // $Malla =$request->input('Malla');
         
-        $docentesteoricos =  DB::select("SELECT c.NombreCurso,c.NivelCurso,c.Tipo,c.Malla,anio.Anio, a.Nombre, a.Ap_Paterno, a.Ap_Materno, c.Rango
-        FROM cursos c, administrativos__cursos ac, administrativos a, anios anio 
-        WHERE c.id = ac.Curso_id and ac.Admin_id = a.id AND anio.id = c.Anio_id AND anio.Anio = $Anio AND c.NivelCurso = '$NivelCurso' AND c.Malla = '$Malla'  ORDER BY Rango ASC"); 
+        // $docentesteoricos =  DB::select("SELECT c.NombreCurso,c.NivelCurso,c.Tipo,c.Malla,anio.Anio, a.Nombre, a.Ap_Paterno, a.Ap_Materno, c.Rango
+        // FROM cursos c, administrativos__cursos ac, administrativos a, anios anio 
+        // WHERE c.id = ac.Curso_id and ac.Admin_id = a.id AND anio.id = c.Anio_id AND anio.Anio = $Anio AND c.NivelCurso = '$NivelCurso' AND c.Malla = '$Malla'  ORDER BY Rango ASC"); 
 
-        $docentesEspecialidad =  DB::select("SELECT DISTINCT c.NombreCurso,c.NivelCurso,c.Tipo,c.Malla,anio.Anio, a.Nombre, a.Ap_Paterno, a.Ap_Materno,e.Especialidad, c.Rango
-        FROM cursos c, calificaciones calif, administrativos a, anios anio , estudiantes e 
-        WHERE anio.id = c.Anio_id and c.id = calif.curso_id and calif.estudiante_id = e.id AND e.Admin_id = a.id AND anio.Anio = $Anio AND c.NivelCurso = '$NivelCurso' AND c.Malla = '$Malla' AND c.NombreCurso LIKE '%ESPECIALIDAD%' ORDER BY a.Ap_Paterno, a.Ap_Materno,a.Nombre DESC");
+        // $docentesEspecialidad =  DB::select("SELECT DISTINCT c.NombreCurso,c.NivelCurso,c.Tipo,c.Malla,anio.Anio, a.Nombre, a.Ap_Paterno, a.Ap_Materno,e.Especialidad, c.Rango
+        // FROM cursos c, calificaciones calif, administrativos a, anios anio , estudiantes e 
+        // WHERE anio.id = c.Anio_id and c.id = calif.curso_id and calif.estudiante_id = e.id AND e.Admin_id = a.id AND anio.Anio = $Anio AND c.NivelCurso = '$NivelCurso' AND c.Malla = '$Malla' AND c.NombreCurso LIKE '%ESPECIALIDAD%' ORDER BY a.Ap_Paterno, a.Ap_Materno,a.Nombre DESC");
+
+        // return response()->json([
+        //     'datateoricos' => $docentesteoricos,
+        //     'dataespeacialidad' => $docentesEspecialidad
+        // ]);
+        $Anio = $request->input('Anio');
+        $NivelCurso = $request->input('NivelCurso');
+        $Malla = $request->input('Malla');
+
+        $docentesteoricos = DB::select(
+            "SELECT c.NombreCurso, c.NivelCurso, c.Tipo, c.Malla, anio.Anio,
+                    a.Nombre, a.Ap_Paterno, a.Ap_Materno, c.Rango
+            FROM cursos c
+            JOIN administrativos__cursos ac ON c.id = ac.Curso_id
+            JOIN administrativos a ON ac.Admin_id = a.id
+            JOIN anios anio ON anio.id = c.Anio_id
+            WHERE anio.Anio = ?
+            AND c.NivelCurso = ?
+            AND c.Malla = ?
+            ORDER BY c.Rango ASC",
+            [$Anio, $NivelCurso, $Malla]
+        );
+
+        $docentesEspecialidad = DB::select(
+            "SELECT DISTINCT c.NombreCurso, c.NivelCurso, c.Tipo, c.Malla, anio.Anio,
+                    a.Nombre, a.Ap_Paterno, a.Ap_Materno, e.Especialidad, c.Rango
+            FROM cursos c
+            JOIN calificaciones calif ON c.id = calif.curso_id
+            JOIN estudiantes e ON calif.estudiante_id = e.id
+            JOIN administrativos a ON e.Admin_id = a.id
+            JOIN anios anio ON anio.id = c.Anio_id
+            WHERE anio.Anio = ?
+            AND c.NivelCurso = ?
+            AND c.Malla = ?
+            AND c.NombreCurso LIKE '%ESPECIALIDAD%'
+            ORDER BY a.Ap_Paterno, a.Ap_Materno, a.Nombre DESC",
+            [$Anio, $NivelCurso, $Malla]
+        );
 
         return response()->json([
             'datateoricos' => $docentesteoricos,
             'dataespeacialidad' => $docentesEspecialidad
         ]);
     }
+
     public function getdocentesespecialidades(Request $request)
     {
         $Anio =$request->input('Anio');
